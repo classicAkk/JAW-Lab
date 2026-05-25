@@ -1,5 +1,7 @@
 package net.awyvrix.jaw_lab.content.network;
 
+import net.awyvrix.jaw_lab.screen.KCPNetwork.KeycardProgrammatorNetworkMenu;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -11,6 +13,7 @@ import java.util.*;
 
 public class NetworkWorldData extends SavedData {
     private static final String DATA_NAME = "jaw_lab_networks";
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Network/NetworkWorldData.java
     /*
      * Vector
      * |---Vector //network 1 with id = 0
@@ -22,6 +25,8 @@ public class NetworkWorldData extends SavedData {
      *     |---NetworkUser(uuid, status, accessLevel) //user1
      *     |---NetworkUser(uuid, status, accessLevel) //user2
      */
+=======
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/network/NetworkWorldData.java
 
     private final Map<String, Network> networks = new HashMap<>();
 
@@ -91,7 +96,7 @@ public class NetworkWorldData extends SavedData {
         user.setAccessLevel(cLevel);
         setDirty();
     }
-    public void incrementLevel(String networkName, Player player, UUID uuid) {
+    public void incrementLevel(String networkName, Player player, UUID uuid, KeycardProgrammatorNetworkMenu menu) {
         Network network = networks.get(networkName); if (network == null) return;
         NetworkUser user = network.getUser(uuid);
         NetworkUser actor = network.getUser(player.getUUID());
@@ -102,9 +107,11 @@ public class NetworkWorldData extends SavedData {
         if (actor.getAccessLevel() > user.getAccessLevel() || actorRole == NetworkRole.FOUNDER || actorRole == NetworkRole.ADMIN) {
             user.setAccessLevel(user.getAccessLevel()+1);
             setDirty();
+            menu.setAccessLevel(user.getAccessLevel());
+            menu.broadcastChanges();
         }
     }
-    public void decrementLevel(String networkName, Player player, UUID uuid) {
+    public void decrementLevel(String networkName, Player player, UUID uuid, KeycardProgrammatorNetworkMenu menu) {
         Network network = networks.get(networkName); if (network == null) return;
         NetworkUser user = network.getUser(uuid);
         NetworkUser actor = network.getUser(player.getUUID());
@@ -112,9 +119,10 @@ public class NetworkWorldData extends SavedData {
         if (!NetworkSecurity.canChangeLevel(actor)) return;
         if (role == NetworkRole.FOUNDER || role == NetworkRole.ADMIN) return;
         if (user.getAccessLevel() == 0) return;
-
         user.setAccessLevel(user.getAccessLevel()-1);
         setDirty();
+        menu.setAccessLevel(user.getAccessLevel());
+        menu.broadcastChanges();
     }
 
     public boolean canIncrementLevel(String networkName, Player player, UUID uuid) {
@@ -188,12 +196,14 @@ public class NetworkWorldData extends SavedData {
         user.setRole(role);
         setDirty();
     }
-    public void setUserRoleSafe(String networkName, Player player, UUID uuid, NetworkRole role) {
+    public void setUserRoleSafe(String networkName, Player player, UUID uuid, NetworkRole role, KeycardProgrammatorNetworkMenu menu) {
         NetworkUser user = findUser(networkName, uuid);if (user == null) return;
         NetworkUser actor = networks.get(networkName).getUser(player.getUUID());
         if (!NetworkSecurity.canChangeRole(actor)) return;
         user.setRole(role);
         setDirty();
+        menu.setRole(role);
+        menu.broadcastChanges();
     }
 
     public int getUserLevel(String networkName, UUID uuid) {
@@ -218,30 +228,36 @@ public class NetworkWorldData extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         ListTag networkList = new ListTag();
+
         for (Network network : networks.values()) {
             CompoundTag networkTag = new CompoundTag();
             networkTag.putString("name", network.getName());
+
             ListTag userList = new ListTag();
             for (NetworkUser user : network.getUsers()) {
                 userList.add(user.save());
             }
+
             networkTag.put("users", userList);
             networkList.add(networkTag);
         }
+
         tag.put("networks", networkList);
         return tag;
     }
 
-    public static NetworkWorldData load(CompoundTag tag) {
+    public static NetworkWorldData load(CompoundTag tag, HolderLookup.Provider registries) {
         NetworkWorldData data = new NetworkWorldData();
         ListTag networkList = tag.getList("networks", Tag.TAG_COMPOUND);
+
         for (int i = 0; i < networkList.size(); i++) {
             CompoundTag networkTag = networkList.getCompound(i);
             String name = networkTag.getString("name");
             Network network = new Network(name);
             ListTag userList = networkTag.getList("users", Tag.TAG_COMPOUND);
+
             for (int j = 0; j < userList.size(); j++) {
                 CompoundTag userTag = userList.getCompound(j);
                 NetworkUser user = NetworkUser.load(userTag);
@@ -255,11 +271,7 @@ public class NetworkWorldData extends SavedData {
     }
 
     public static NetworkWorldData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(
-                NetworkWorldData::load,
-                NetworkWorldData::create,
-                DATA_NAME
-        );
+        return level.getDataStorage().computeIfAbsent(new SavedData.Factory<>(NetworkWorldData::create, NetworkWorldData::load, null), DATA_NAME);
     }
 
     public static NetworkWorldData create() {

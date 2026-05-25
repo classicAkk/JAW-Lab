@@ -1,11 +1,21 @@
-package net.awyvrix.jaw_lab.content.blocks.blockEntities.Barriers;
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Blocks/BlockEntities/Barriers/BarrierGateOffBE.java
+package net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Barriers;
 
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.Util.TickableBE;
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Util.TickableBE;
+import net.classicAkk.jaw_lab.Content.Blocks.LabBlockEntities;
+import net.classicAkk.jaw_lab.Content.Blocks.LabBlocks;
+=======
+package net.awyvrix.jaw_lab.content.blocks.blockEntities.barriers;
+
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.util.TickableBE;
 import net.awyvrix.jaw_lab.content.blocks.LabBlockEntities;
 import net.awyvrix.jaw_lab.content.blocks.LabBlocks;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/blocks/blockEntities/Barriers/BarrierGateOffBE.java
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -85,17 +95,34 @@ public class BarrierGateOffBE extends BlockEntity implements TickableBE {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag){
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putInt("cLevel", clevel);
         tag.putBoolean("bState", bstate);
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         clevel = tag.getInt("cLevel");
         bstate = tag.getBoolean("bState");
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        loadAdditional(tag, registries);
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     public void updateBarrier() {

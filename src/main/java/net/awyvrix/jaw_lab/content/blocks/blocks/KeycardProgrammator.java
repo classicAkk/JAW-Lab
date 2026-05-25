@@ -1,11 +1,18 @@
-package net.awyvrix.jaw_lab.content.blocks.blocks;
+package net.classicAkk.jaw_lab.Content.Blocks.Blocks;
 
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Blocks/Blocks/KeycardProgrammator.java
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.KeycardProgrammatorBE;
+=======
+import com.mojang.serialization.MapCodec;
 import net.awyvrix.jaw_lab.content.blocks.blockEntities.KeycardProgrammatorBE;
+import net.awyvrix.jaw_lab.screen.KCPMain.KeycardProgrammatorMainMenu;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/blocks/blocks/KeycardProgrammator.java
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -21,7 +28,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
@@ -121,22 +127,27 @@ public class KeycardProgrammator extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (!pLevel.isClientSide()) {
-            BlockEntity entity = pLevel.getBlockEntity(pPos);
-            if(entity instanceof KeycardProgrammatorBE) {
-                NetworkHooks.openScreen(((ServerPlayer)pPlayer), (KeycardProgrammatorBE)entity, pPos);
-            } else {
-                throw new IllegalStateException("Our Container provider is missing!");
-            }
-        }
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.PASS;
 
-        return InteractionResult.sidedSuccess(pLevel.isClientSide());
+        serverPlayer.openMenu(new SimpleMenuProvider((id, inv, pPlayer) ->
+                new KeycardProgrammatorMainMenu(id, inv, level.getBlockEntity(pos)), Component.literal("Keycard")), pos);
+
+        return InteractionResult.CONSUME;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new KeycardProgrammatorBE(pPos, pState);
+    }
+
+    public static final MapCodec<KeycardProgrammator> CODEC =
+            simpleCodec(KeycardProgrammator::new);
+
+    @Override
+    public MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 }

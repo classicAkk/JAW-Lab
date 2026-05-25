@@ -1,32 +1,35 @@
-package net.awyvrix.jaw_lab.content.blocks.blockEntities;
+package net.classicAkk.jaw_lab.Content.Blocks.BlockEntities;
 
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Blocks/BlockEntities/KeycardProgrammatorBE.java
+import net.classicAkk.jaw_lab.Content.Blocks.LabBlockEntities;
+import net.classicAkk.jaw_lab.Content.Items.LabItems;
+import net.classicAkk.jaw_lab.Screen.KCPMain.KeycardProgrammatorMainMenu;
+=======
 import net.awyvrix.jaw_lab.content.blocks.LabBlockEntities;
-import net.awyvrix.jaw_lab.content.Items.LabItems;
+import net.awyvrix.jaw_lab.content.items.LabItems;
 import net.awyvrix.jaw_lab.screen.KCPMain.KeycardProgrammatorMainMenu;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/blocks/blockEntities/KeycardProgrammatorBE.java
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class KeycardProgrammatorBE extends BlockEntity implements MenuProvider {
-    private final ItemStackHandler itemHandler = new ItemStackHandler(2){
+    public final ItemStackHandler inventory = new ItemStackHandler(2) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return stack.getItem() == LabItems.KEYCARD1.get() ||
@@ -36,58 +39,31 @@ public class KeycardProgrammatorBE extends BlockEntity implements MenuProvider {
                     stack.getItem() == LabItems.KEYCARD5.get() ||
                     stack.getItem() == LabItems.DOOR_PROGRAMMATOR.get();
         }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+            if(!level.isClientSide()) {
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            }
+        }
     };
 
-    private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
-    protected final ContainerData data;
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if(cap == ForgeCapabilities.ITEM_HANDLER) {
-            return lazyItemHandler.cast();
-        }
-
-        return super.getCapability(cap, side);
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        lazyItemHandler = LazyOptional.of(() -> itemHandler);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        lazyItemHandler.invalidate();
+    public void clearContents() {
+        inventory.setStackInSlot(0, ItemStack.EMPTY);
     }
 
     public void drops() {
-        SimpleContainer inventory = new SimpleContainer(itemHandler.getSlots());
-        for(int i = 0; i < itemHandler.getSlots(); i++) {
-            inventory.setItem(i, itemHandler.getStackInSlot(i));
+        SimpleContainer inv = new SimpleContainer(inventory.getSlots());
+        for(int i = 0; i < inventory.getSlots(); i++) {
+            inv.setItem(i, inventory.getStackInSlot(i));
         }
-        Containers.dropContents(this.level, this.worldPosition, inventory);
+        Containers.dropContents(this.level, this.worldPosition, inv);
     }
 
     public KeycardProgrammatorBE(BlockPos pPos, BlockState pState) {
         super(LabBlockEntities.KEYCARD_PROGRAMMATOR.get(), pPos, pState);
-        this.data = new ContainerData() {
-            @Override
-            public int get(int pIndex) {
-                return 0;
-            }
-
-            @Override
-            public void set(int pIndex, int pValue) {
-
-            }
-
-            @Override
-            public int getCount() {
-                return 0;
-            }
-        };
     }
 
     @Override
@@ -97,20 +73,30 @@ public class KeycardProgrammatorBE extends BlockEntity implements MenuProvider {
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pPlayerInventory, Player pPlayer) {
-        return new KeycardProgrammatorMainMenu(pContainerId, pPlayerInventory, this, this.data);
+    public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        return new KeycardProgrammatorMainMenu(i, inventory, this);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag) {
-        pTag.put("inventory", itemHandler.serializeNBT());
-
-        super.saveAdditional(pTag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("inventory", inventory.serializeNBT(registries));
     }
 
     @Override
-    public void load(CompoundTag pTag) {
-        super.load(pTag);
-        itemHandler.deserializeNBT(pTag.getCompound("inventory"));
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        inventory.deserializeNBT(registries, tag.getCompound("inventory"));
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider pRegistries) {
+        return saveWithoutMetadata(pRegistries);
     }
 }

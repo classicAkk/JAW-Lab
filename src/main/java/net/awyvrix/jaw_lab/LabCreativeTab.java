@@ -1,19 +1,28 @@
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/LabCreativeTab.java
+package net.classicAkk.jaw_lab;
+import net.classicAkk.jaw_lab.Content.Blocks.LabBlocks;
+import net.classicAkk.jaw_lab.Content.Items.LabItems;
+=======
 package net.awyvrix.jaw_lab;
+
 import net.awyvrix.jaw_lab.content.blocks.LabBlocks;
-import net.awyvrix.jaw_lab.content.Items.LabItems;
+import net.awyvrix.jaw_lab.content.items.LabItems;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/LabCreativeTab.java
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
 public class LabCreativeTab {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Lab.MOD_ID);
 
-    public static final RegistryObject<CreativeModeTab> LAB_BLOCKS_TAB = CREATIVE_MODE_TABS.register("lab_blocks_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(LabItems.KEYCARD4.get()))
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> LAB_BLOCKS_TAB =
+            CREATIVE_MODE_TABS.register("lab_tab", () -> CreativeModeTab.builder()
+                    .icon(() -> new ItemStack(LabItems.KEYCARD4.get()))
                     .title(Component.translatable("creativetab.lab_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(LabBlocks.YELLOW_UP.get());

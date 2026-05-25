@@ -1,7 +1,12 @@
-package net.awyvrix.jaw_lab.content.blocks.blocks.barrier;
+package net.classicAkk.jaw_lab.Content.Blocks.Blocks.Barrier;
 
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.Util.TickableBE;
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Blocks/Blocks/Barrier/BarrierGateOff.java
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Util.TickableBE;
+import net.classicAkk.jaw_lab.Content.Blocks.LabBlockEntities;
+=======
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.util.TickableBE;
 import net.awyvrix.jaw_lab.content.blocks.LabBlockEntities;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/blocks/blocks/barrier/BarrierGateOff.java
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;

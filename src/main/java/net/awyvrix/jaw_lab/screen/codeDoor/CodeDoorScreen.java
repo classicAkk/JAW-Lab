@@ -1,33 +1,36 @@
-package net.awyvrix.jaw_lab.screen.codeDoor;
+package net.classicAkk.jaw_lab.Screen.CodeDoor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.Doors.CodeDoorBE;
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/CodeDoor/CodeDoorScreen.java
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.CodeDoorBE;
+import net.classicAkk.jaw_lab.Lab;
+import net.classicAkk.jaw_lab.Screen.Elements.GuiButton;
+import net.classicAkk.jaw_lab.Screen.ProcessingPackets.ProcessingPacket;
+import net.classicAkk.jaw_lab.Util.LabPackets;
+=======
+import net.awyvrix.jaw_lab.content.networking.packet.doors.CodeDoorSubmitPacket;
 import net.awyvrix.jaw_lab.Lab;
 import net.awyvrix.jaw_lab.screen.elements.GuiButton;
-import net.awyvrix.jaw_lab.screen.processingPackets.ProcessingPacket;
-import net.awyvrix.jaw_lab.util.LabPackets;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/codeDoor/CodeDoorScreen.java
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class CodeDoorScreen extends AbstractContainerScreen<CodeDoorMenu> {
     public int offsetX = 48;
     public int offsetY = 22;
     private String text = "";
     private boolean hidden = true;
-    private final Player player = CodeDoorMenu.getPlayer();
     private final BlockEntity be = CodeDoorMenu.getBE();
-    private final Level level = CodeDoorMenu.getLevel();
 
 
     private final ResourceLocation TEXTURE =
-            new ResourceLocation(Lab.MOD_ID, "textures/gui/code_door.png");
+            ResourceLocation.fromNamespaceAndPath(Lab.MOD_ID, "textures/gui/code_door.png");
 
     public CodeDoorScreen(CodeDoorMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -56,8 +59,6 @@ public class CodeDoorScreen extends AbstractContainerScreen<CodeDoorMenu> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        renderBackground(guiGraphics);
-
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderTextElements(guiGraphics);
         renderTooltip(guiGraphics, mouseX, mouseY);
@@ -153,20 +154,8 @@ public class CodeDoorScreen extends AbstractContainerScreen<CodeDoorMenu> {
         this.addRenderableWidget( //submit
                 new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 101, 52, 14, 50, 208, 224, Component.empty(),
                         button -> {
-                            if (be instanceof CodeDoorBE blockEntity) {
-                                if (blockEntity.getPasscode().equals("")) {
-                                    LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "setCode", text, player));
-                                    player.closeContainer();
-                                }
-                                if (blockEntity.getPasscode().equals(text)) {
-                                    LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "openDoor", text, player));
-                                    player.closeContainer();
-                                }
-                                else {
-                                    LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "error", text, player));
-                                    player.closeContainer();
-                                }
-                            }
+                            if (text.isBlank()) return;
+                            PacketDistributor.sendToServer(new CodeDoorSubmitPacket(be.getBlockPos(), text));
                         }));
     }
 }

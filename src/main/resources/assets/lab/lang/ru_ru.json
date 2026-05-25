@@ -1,24 +1,27 @@
 {
-  "item.lab.keycard1": "Ключкарта",
-  "item.lab.keycard2": "Ключкарта",
-  "item.lab.keycard3": "Ключарта",
-  "item.lab.keycard4": "Ключкарта",
-  "item.lab.keycard5": "Ключкарта",
+  "item.lab.keycard1": "Ключ-карта",
+  "item.lab.keycard2": "Ключ-карта",
+  "item.lab.keycard3": "Ключ-арта",
+  "item.lab.keycard4": "Ключ-карта",
+  "item.lab.keycard5": "Ключ-карта",
   "item.lab.door_programmator": "Дверной программатор",
   "item.lab.crowbar": "Монтировка",
   "item.lab.fuse": "Предохранитель",
-  "item.lab.led_lamp": "Светодиодная лампа",
-  "item.lab.grating": "Решётка",
-  "item.lab.glass_railings": "Стеклянные перила",
-  "item.lab.glass_railings_corner": "Стеклянные перила (Угол)",
+  "block.lab.led_lamp": "Светодиодная лампа",
+  "block.lab.grating": "Решётка",
+  "block.lab.glass_railings": "Стеклянные перила",
+  "block.lab.glass_railings_corner": "Стеклянные перила (угол)",
 
   "block.lab.key_door": "",
   "block.lab.code_door": "Кодовая дверь",
+  "gui.lab.access_denied": "Доступ Запрещён",
+  "gui.lab.paste_settings": "Настройки успешно вставлены",
 
-  "block.lab.ui.kcp": "Программатор ключкарт",
+
+  "block.lab.ui.kcp": "Программатор ключ-карт",
   "block.lab.ui.kcp_copy": "Копирование",
   "block.lab.ui.kcp_network": "Сеть",
-  "block.lab.keycard_programmator": "Программатор ключкарт",
+  "block.lab.keycard_programmator": "Программатор ключ-карт",
 
   "block.lab.armored_concrete": "Армированный бетон",
   "block.lab.armored_concrete_g": "Армированный бетон (Зелёный)",
@@ -46,7 +49,7 @@
   "block.lab.orange_down": "Оранжевый (Низ)",
 
   "block.lab.elevator_inside": "Внутренняя кнопка лифта",
-  "block.lab.elevator_outside": "Наружняя кнопка лифта",
+  "block.lab.elevator_outside": "Наружная кнопка лифта",
 
   "tooltip.lab.key_card1.tooltip":"Сотрудники",
   "tooltip.lab.key_card2.tooltip":"Хранилище",

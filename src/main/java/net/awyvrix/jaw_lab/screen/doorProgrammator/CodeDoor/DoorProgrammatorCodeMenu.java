@@ -1,20 +1,23 @@
-package net.awyvrix.jaw_lab.screen.doorProgrammator.CodeDoor;
+package net.classicAkk.jaw_lab.Screen.DoorProgrammator.CodeDoor;
 
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.Doors.CodeDoorBE;
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/DoorProgrammator/CodeDoor/DoorProgrammatorCodeMenu.java
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.CodeDoorBE;
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.KeyDoorBE;
+import net.classicAkk.jaw_lab.Screen.LabMenuTypes;
+=======
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.doors.CodeDoorBE;
 import net.awyvrix.jaw_lab.screen.LabMenuTypes;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/doorProgrammator/CodeDoor/DoorProgrammatorCodeMenu.java
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class DoorProgrammatorCodeMenu extends AbstractContainerMenu {
     public static CodeDoorBE blockEntity;
     private static Player player;
-    private static Level level;
-    private static Level serverLevel;
 
     public DoorProgrammatorCodeMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         this(id, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), ContainerLevelAccess.NULL);
@@ -25,22 +28,12 @@ public class DoorProgrammatorCodeMenu extends AbstractContainerMenu {
 
         blockEntity = ((CodeDoorBE) entity);
         player = inv.player;
-        level = inv.player.level();
-        if (!blockEntity.getLevel().isClientSide()) {
-            serverLevel = blockEntity.getLevel();
-            blockEntity = ((CodeDoorBE) entity);
-        }
     }
 
     public static Player getPlayer() {
         return player;
     }
-    public static Level getLevel() {
-        if (!serverLevel.isClientSide()) {
-            return serverLevel;
-        }
-        return null;
-    }
+
     public static BlockEntity getBE() {
         return blockEntity;
     }

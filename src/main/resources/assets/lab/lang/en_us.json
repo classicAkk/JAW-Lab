@@ -15,6 +15,8 @@
 
   "block.lab.key_door": "Key Door",
   "block.lab.code_door": "Code Door",
+  "gui.lab.access_denied": "Access Denied",
+  "gui.lab.paste_settings": "Successfully pasted settings",
 
   "block.lab.ui.kcp": "Keycard Programmator",
   "block.lab.ui.kcp_copy": "KCP Copy",

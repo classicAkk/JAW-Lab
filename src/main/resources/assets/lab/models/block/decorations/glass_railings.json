@@ -1,5 +1,6 @@
 {
 	"credit": "Made with Blockbench",
+	"render_type": "minecraft:translucent",
 	"textures": {
 		"0": "block/glass",
 		"1": "block/iron_block",

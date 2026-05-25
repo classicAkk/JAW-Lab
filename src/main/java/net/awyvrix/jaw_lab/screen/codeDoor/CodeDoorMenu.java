@@ -1,7 +1,12 @@
-package net.awyvrix.jaw_lab.screen.codeDoor;
+package net.classicAkk.jaw_lab.Screen.CodeDoor;
 
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.Doors.CodeDoorBE;
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/CodeDoor/CodeDoorMenu.java
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.CodeDoorBE;
+import net.classicAkk.jaw_lab.Screen.LabMenuTypes;
+=======
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.doors.CodeDoorBE;
 import net.awyvrix.jaw_lab.screen.LabMenuTypes;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/codeDoor/CodeDoorMenu.java
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

@@ -1,28 +1,43 @@
-package net.awyvrix.jaw_lab.content.blocks.blocks.doors;
+package net.classicAkk.jaw_lab.Content.Blocks.Blocks.Doors;
 
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.Doors.KeyDoorBE;
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.Util.DoorState;
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.Util.TickableBE;
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Blocks/Blocks/Doors/KeyDoor.java
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.KeyDoorBE;
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Util.DoorState;
+import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Util.TickableBE;
+import net.classicAkk.jaw_lab.Content.Blocks.LabBlockEntities;
+import net.classicAkk.jaw_lab.Content.Blocks.LabBlocks;
+import net.classicAkk.jaw_lab.Content.Items.LabItems;
+import net.classicAkk.jaw_lab.Content.Items.custom.item.keycards.KeyCard1;
+import net.classicAkk.jaw_lab.Content.Sound.LabSounds;
+import net.classicAkk.jaw_lab.Screen.CodeDoor.CodeDoorMenu;
+import net.classicAkk.jaw_lab.Screen.DoorProgrammator.CodeDoor.DoorProgrammatorCodeMenu;
+import net.classicAkk.jaw_lab.Screen.DoorProgrammator.KeyDoor.DoorProgrammatorKeyMenu;
+=======
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.doors.KeyDoorBE;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.util.DoorState;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.util.TickableBE;
 import net.awyvrix.jaw_lab.content.blocks.LabBlockEntities;
 import net.awyvrix.jaw_lab.content.blocks.LabBlocks;
-import net.awyvrix.jaw_lab.content.Items.LabItems;
+import net.awyvrix.jaw_lab.content.interactions.KeycardData;
+import net.awyvrix.jaw_lab.content.items.LabItems;
 import net.awyvrix.jaw_lab.content.sound.LabSounds;
 import net.awyvrix.jaw_lab.screen.doorProgrammator.KeyDoor.DoorProgrammatorKeyMenu;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/blocks/blocks/doors/KeyDoor.java
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -41,10 +56,10 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Vector;
 import java.util.stream.Stream;
 
 public class KeyDoor extends Block implements EntityBlock {
@@ -167,74 +182,108 @@ public class KeyDoor extends Block implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos,
-                                 Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (!pLevel.isClientSide()) {
-            if (pLevel.getBlockEntity(pPos) instanceof KeyDoorBE keydoor) {
-                ItemStack stack = pPlayer.getItemInHand(pHand);
-                DoorState state = pState.getValue(KeyDoor.STATE);
-                CompoundTag tag = stack.getOrCreateTag();
-                int cLevel = tag.getInt("cLevel");
-                String cNetwork = tag.getString("cNetwork");
-                int x = pPos.getX(); int y = pPos.getY(); int z = pPos.getZ();
-                if (state == DoorState.ERROR) return InteractionResult.FAIL;
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                           Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (level.isClientSide()) return ItemInteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer serverPlayer)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!(level.getBlockEntity(pos) instanceof KeyDoorBE keyDoor)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        DoorState doorState = state.getValue(KeyDoor.STATE);
 
-                //System.out.print(keydoor.getNetwork() + " " + cNetwork + " - " + keydoor.getCLevel() + " " + cLevel + "\n");
-                if ((keydoor.getCLevel() > cLevel || (!cNetwork.equals(keydoor.getNetwork()) && cNetwork.equals("null")) || stack.isEmpty())
-                        && state != DoorState.OPENED && state != DoorState.ERROR) {
-                    pPlayer.displayClientMessage(Component.literal("Access Denied").withStyle(ChatFormatting.RED), true);
-                    pLevel.playSound(null, pPos, LabSounds.KEYDOOR_ERROR.get(), SoundSource.BLOCKS, 0.5f, 1f);
-                    pLevel.setBlockAndUpdate(pPos, pState.setValue(STATE, DoorState.ERROR));
-                    keydoor.resetTick();
-                    return InteractionResult.FAIL;
-                }
-                if (pPlayer.getItemInHand(pHand).getItem().equals(LabItems.DOOR_PROGRAMMATOR.get()) && pPlayer.isShiftKeyDown()) {
-                    pPlayer.displayClientMessage(Component.literal("Successfully pasted settings").withStyle(ChatFormatting.GREEN), true);
-                    //pass for now; Paste the settings from keydoorProgrammator
-                    return InteractionResult.SUCCESS;
-                }
-                if (pPlayer.getItemInHand(pHand).getItem().equals(LabItems.DOOR_PROGRAMMATOR.get()) && !pPlayer.isShiftKeyDown()) {
-                    NetworkHooks.openScreen((ServerPlayer) pPlayer,
-                            new SimpleMenuProvider((id, inv, p) ->
-                                    new DoorProgrammatorKeyMenu(id, inv,  pLevel.getBlockEntity(pPos), ContainerLevelAccess.create(pLevel, pPos)),
-                                    Component.translatable("block.lab.key_door")), pPos);
-                    return InteractionResult.SUCCESS;
-                }
-                if (state == DoorState.CLOSED) {
-                    pLevel.playSound(null, pPos, LabSounds.KEYDOOR_OPEN.get(), SoundSource.BLOCKS, 0.5f, 1f);
-                    pLevel.setBlockAndUpdate(pPos, pState.setValue(STATE, DoorState.OPENED));
-                    pLevel.setBlockAndUpdate(pPos.below(), LabBlocks.DOOR_BOTTOM.get().withPropertiesOf(pState.setValue(STATE, DoorState.OPENED)));
-                    if (pLevel instanceof ServerLevel server) server.sendParticles(ParticleTypes.SMOKE,
-                            x + 0.5, y, z + 0.5, 20, 0.2, 0.4, 0.2, 0.02);
-                    keydoor.resetTick();
-                }
-                if (state == DoorState.OPENED && !keydoor.getAutoClose()) {
-                    pLevel.playSound(null, pPos, LabSounds.KEYDOOR_CLOSE.get(), SoundSource.BLOCKS, 0.5f, 1f);
-                    pLevel.setBlockAndUpdate(pPos, pState.setValue(STATE, DoorState.ERROR));
-                    pLevel.setBlockAndUpdate(pPos.below(), LabBlocks.DOOR_BOTTOM.get().withPropertiesOf(pState.setValue(STATE, DoorState.CLOSED)));
-                    if (pLevel instanceof ServerLevel server) server.sendParticles(ParticleTypes.SMOKE,
-                            x + 0.5, y, z + 0.5, 20, 0.2, 0.4, 0.2, 0.02);
-                    keydoor.resetTick();
-                }
+        KeycardData data = KeycardData.get(stack);
+        int cLevel = data.level();
+        String cNetwork = data.network();
+
+        if (doorState == DoorState.ERROR) return ItemInteractionResult.FAIL;
+        int requiredLevel = keyDoor.getCLevel();
+        String requiredNetwork = keyDoor.getNetwork();
+
+        if (doorState == DoorState.OPENED && !keyDoor.getAutoClose()) {
+            int x = pos.getX(), y = pos.getY(), z = pos.getZ();
+
+            level.playSound(null, pos, LabSounds.KEY_DOOR_CLOSE.get(), SoundSource.BLOCKS, 0.5f, 1f);
+            level.setBlockAndUpdate(pos, state.setValue(KeyDoor.STATE, DoorState.ERROR));
+            BlockState bottom = LabBlocks.DOOR_BOTTOM.get()
+                    .defaultBlockState()
+                    .setValue(DoorBottom.FACING, state.getValue(DoorBottom.FACING))
+                    .setValue(DoorBottom.STATE, DoorState.CLOSED);
+
+            level.setBlock(pos.below(), bottom, 3);
+
+            if (level instanceof ServerLevel server) {
+                server.sendParticles(ParticleTypes.SMOKE,
+                        x + 0.5, y, z + 0.5, 20, 0.2, 0.4, 0.2, 0.02);
             }
+
+            keyDoor.resetTick();
+            return ItemInteractionResult.SUCCESS;
         }
-        return InteractionResult.SUCCESS;
+
+        if (requiredLevel > cLevel || (!cNetwork.equals(requiredNetwork) && cNetwork.equals("null")) || stack.isEmpty()) {
+            player.displayClientMessage(Component.translatable("gui.lab.access_denied").withStyle(ChatFormatting.RED), true);
+
+            level.playSound(null, pos, LabSounds.KEY_DOOR_ERROR.get(), SoundSource.BLOCKS, 0.5f, 1f);
+            level.setBlockAndUpdate(pos, state.setValue(KeyDoor.STATE, DoorState.ERROR));
+            keyDoor.resetTick();
+
+            return ItemInteractionResult.FAIL;
+        }
+
+        if (stack.is(LabItems.DOOR_PROGRAMMATOR.get()) && player.isShiftKeyDown()) {
+            player.displayClientMessage(Component.translatable("gui.lab.paste_settings").withStyle(ChatFormatting.GREEN), true);
+
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (stack.is(LabItems.DOOR_PROGRAMMATOR.get())) {
+            serverPlayer.openMenu(new SimpleMenuProvider(
+                    (id, inv, p) -> new DoorProgrammatorKeyMenu(id, inv, level.getBlockEntity(pos),
+                            ContainerLevelAccess.create(level, pos)), Component.translatable("block.lab.key_door")), pos);
+
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (doorState == DoorState.CLOSED) {
+            int x = pos.getX(), y = pos.getY(), z = pos.getZ();
+
+            level.playSound(null, pos, LabSounds.KEY_DOOR_OPEN.get(), SoundSource.BLOCKS, 0.5f, 1f);
+            level.setBlockAndUpdate(pos, state.setValue(KeyDoor.STATE, DoorState.OPENED));
+            BlockState bottom = LabBlocks.DOOR_BOTTOM.get()
+                    .defaultBlockState()
+                    .setValue(DoorBottom.FACING, state.getValue(DoorBottom.FACING))
+                    .setValue(DoorBottom.STATE, DoorState.OPENED);
+            level.setBlock(pos.below(), bottom, 3);
+
+            if (level instanceof ServerLevel server) {
+                server.sendParticles(ParticleTypes.SMOKE,
+                        x + 0.5, y, z + 0.5, 20, 0.2, 0.4, 0.2, 0.02);
+            }
+
+            keyDoor.resetTick();
+        }
+
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        level.setBlock(pos, LabBlocks.DOOR_BOTTOM.get().withPropertiesOf(state).setValue(STATE, DoorState.CLOSED), 3);
+        BlockState bottom = LabBlocks.DOOR_BOTTOM.get()
+                .defaultBlockState()
+                .setValue(DoorBottom.FACING, state.getValue(DoorBottom.FACING))
+                .setValue(DoorBottom.STATE, DoorState.CLOSED);
+
+        level.setBlock(pos, bottom, 3);
         level.setBlock(pos.above(), LabBlocks.KEY_DOOR.get().withPropertiesOf(state).setValue(STATE, DoorState.CLOSED), 3);
     }
 
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (level.getBlockState(pos.below()).getBlock() == LabBlocks.DOOR_BOTTOM.get()) {
             BlockPos below = pos.below();
             level.destroyBlock(below, false);
         }
 
         super.playerWillDestroy(level, pos, state, player);
+        return state;
     }
 
     @Override

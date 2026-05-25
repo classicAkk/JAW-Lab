@@ -1,30 +1,33 @@
-package net.awyvrix.jaw_lab.content.sound;
+package net.classicAkk.jaw_lab.Content.Sound;
 
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Sound/LabSounds.java
+import net.classicAkk.jaw_lab.Lab;
+=======
 import net.awyvrix.jaw_lab.Lab;
+import net.minecraft.core.registries.BuiltInRegistries;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/sound/LabSounds.java
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 public class LabSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
-            DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Lab.MOD_ID);
+            DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, Lab.MOD_ID);
 
-    public static final RegistryObject<SoundEvent> KEYDOOR_TICK = registerSoundEvents("door_tick");
-    public static final RegistryObject<SoundEvent> KEYDOOR_OPEN = registerSoundEvents("door_open");
-    public static final RegistryObject<SoundEvent> KEYDOOR_CLOSE = registerSoundEvents("door_close");
-    public static final RegistryObject<SoundEvent> KEYDOOR_ERROR = registerSoundEvents("door_error");
+    public static final Supplier<SoundEvent> KEY_DOOR_TICK = registerSoundEvent("door_tick");
+    public static final Supplier<SoundEvent> KEY_DOOR_OPEN = registerSoundEvent("door_open");
+    public static final Supplier<SoundEvent> KEY_DOOR_CLOSE = registerSoundEvent("door_close");
+    public static final Supplier<SoundEvent> KEY_DOOR_ERROR = registerSoundEvent("door_error");
 
-    public static final RegistryObject<SoundEvent> ITEM_PICKUP = registerSoundEvents("item_pickup");
-
-
+    public static final Supplier<SoundEvent> ITEM_PICKUP = registerSoundEvent("item_pickup");
 
 
-
-    private static RegistryObject<SoundEvent> registerSoundEvents(String name) {
-        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Lab.MOD_ID, name)));
+    private static Supplier<SoundEvent> registerSoundEvent(String name) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Lab.MOD_ID, name);
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
     }
 
     public static void register(IEventBus eventBus) {
