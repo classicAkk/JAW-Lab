@@ -1,6 +1,7 @@
 {
 	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
+	"render_type": "minecraft:translucent",
 	"texture_size": [32, 32],
 	"textures": {
 		"0": "lab:block/barrier_gate_emitter",

@@ -10,38 +10,35 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class KeycardProgrammatorMainMenu extends AbstractContainerMenu {
     public final KeycardProgrammatorBE blockEntity;
     private static Level serverLevel;
     private final Level level;
-    private final ContainerData data;
 
-    public KeycardProgrammatorMainMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+    public KeycardProgrammatorMainMenu(int containerId, Inventory inv, FriendlyByteBuf extraData) {
+        this(containerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
     }
 
-    public KeycardProgrammatorMainMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
-        super(LabMenuTypes.KCP_MAIN.get(), pContainerId);
+    public KeycardProgrammatorMainMenu(int containerId, Inventory inv, BlockEntity blockEntity) {
+        super(LabMenuTypes.KCP_MAIN.get(), containerId);
 
         checkContainerSize(inv, 1);
-        blockEntity = ((KeycardProgrammatorBE) entity);
+        this.blockEntity = ((KeycardProgrammatorBE) blockEntity);
         this.level = inv.player.level();
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/KCPMain/KeycardProgrammatorMainMenu.java
         this.data = data;
         if (!blockEntity.getLevel().isClientSide()) {
             serverLevel = blockEntity.getLevel();
         }
+=======
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/KCPMain/KeycardProgrammatorMainMenu.java
 
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
 
-        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 8, 47));
-        });
-
-        addDataSlots(data);
+        this.addSlot(new SlotItemHandler(this.blockEntity.inventory, 0, 8, 47));
     }
 
     public static Level getServerLevel() {

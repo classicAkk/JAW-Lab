@@ -1,5 +1,6 @@
 package net.classicAkk.jaw_lab.Render;
 
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Render/LabEventClientBusEvent.java
 import net.classicAkk.jaw_lab.Content.Blocks.LabBlocks;
 import net.classicAkk.jaw_lab.Lab;
 import net.classicAkk.jaw_lab.Screen.CodeDoor.CodeDoorScreen;
@@ -16,26 +17,32 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+=======
+import net.awyvrix.jaw_lab.Lab;
+import net.awyvrix.jaw_lab.screen.codeDoor.CodeDoorScreen;
+import net.awyvrix.jaw_lab.screen.doorProgrammator.CodeDoor.DoorProgrammatorCodeScreen;
+import net.awyvrix.jaw_lab.screen.doorProgrammator.KeyDoor.DoorProgrammatorKeyScreen;
+import net.awyvrix.jaw_lab.screen.KCPCopy.KeycardProgrammatorCopyScreen;
+import net.awyvrix.jaw_lab.screen.KCPMain.KeycardProgrammatorMainScreen;
+import net.awyvrix.jaw_lab.screen.KCPNetwork.KeycardProgrammatorNetworkScreen;
+import net.awyvrix.jaw_lab.screen.LabMenuTypes;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/render/LabEventClientBusEvent.java
 
-@SuppressWarnings("ALL")
-@Mod.EventBusSubscriber(modid = Lab.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Lab.MOD_ID)
 public class LabEventClientBusEvent {
+
     @SubscribeEvent
-    public static void clientSetup(final FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(LabBlocks.GRATING.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(LabBlocks.GLASS_RAILINGS.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(LabBlocks.GLASS_RAILINGS_CORNER.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(LabBlocks.BARRIER_GATE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(LabBlocks.BARRIER_GATE_CONNECTOR.get(), RenderType.translucent());
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(LabMenuTypes.KCP_NETWORK.get(), KeycardProgrammatorNetworkScreen::new);
+        event.register(LabMenuTypes.KCP_COPY.get(), KeycardProgrammatorCopyScreen::new);
+        event.register(LabMenuTypes.KCP_MAIN.get(), KeycardProgrammatorMainScreen::new);
 
-        MenuScreens.register(LabMenuTypes.KCP_NETWORK.get(), KeycardProgrammatorNetworkScreen::new);
-        MenuScreens.register(LabMenuTypes.KCP_COPY.get(), KeycardProgrammatorCopyScreen::new);
-        MenuScreens.register(LabMenuTypes.KCP_MAIN.get(), KeycardProgrammatorMainScreen::new);
-        MenuScreens.register(LabMenuTypes.CODE_DOOR.get(), CodeDoorScreen::new);
-        MenuScreens.register(LabMenuTypes.DPR_CODE.get(), DoorProgrammatorCodeScreen::new);
-        MenuScreens.register(LabMenuTypes.DPR_KEY.get(), DoorProgrammatorKeyScreen::new);
-    }
+        event.register(LabMenuTypes.CODE_DOOR.get(), CodeDoorScreen::new);
 
-    public static void doSetup(FMLClientSetupEvent event) {
+        event.register(LabMenuTypes.DPR_CODE.get(), DoorProgrammatorCodeScreen::new);
+        event.register(LabMenuTypes.DPR_KEY.get(), DoorProgrammatorKeyScreen::new);
     }
 }

@@ -1,37 +1,47 @@
 package net.classicAkk.jaw_lab.Content.Blocks;
 
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Blocks/LabBlockEntities.java
 import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Barriers.BarrierGateBE;
 import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Barriers.BarrierGateOffBE;
 import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.CodeDoorBE;
 import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.KeyDoorBE;
 import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.KeycardProgrammatorBE;
 import net.classicAkk.jaw_lab.Lab;
+=======
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.barriers.BarrierGateBE;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.barriers.BarrierGateOffBE;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.doors.CodeDoorBE;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.doors.KeyDoorBE;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.KeycardProgrammatorBE;
+import net.awyvrix.jaw_lab.Lab;
+import net.minecraft.core.registries.BuiltInRegistries;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/blocks/LabBlockEntities.java
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 public class LabBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
-            DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Lab.MOD_ID);
+            DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Lab.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<KeycardProgrammatorBE>> KEYCARD_PROGRAMMATOR =
+    public static final Supplier<BlockEntityType<KeycardProgrammatorBE>> KEYCARD_PROGRAMMATOR =
             BLOCK_ENTITIES.register("keycard_programmator",
                     ()-> BlockEntityType.Builder.of(KeycardProgrammatorBE::new, LabBlocks.KEYCARD_PROGRAMMATOR.get()).build(null));
     //KeyDoors
-    public static final RegistryObject<BlockEntityType<KeyDoorBE>> KEY_DOOR_BE =
+    public static final Supplier<BlockEntityType<KeyDoorBE>> KEY_DOOR_BE =
             BLOCK_ENTITIES.register("key_door_be",
                     ()-> BlockEntityType.Builder.of(KeyDoorBE::new, LabBlocks.KEY_DOOR.get()).build(null));
     //CodeDoors
-    public static final RegistryObject<BlockEntityType<CodeDoorBE>> CODE_DOOR_BE =
+    public static final Supplier<BlockEntityType<CodeDoorBE>> CODE_DOOR_BE =
             BLOCK_ENTITIES.register("code_door_be",
                     ()-> BlockEntityType.Builder.of(CodeDoorBE::new, LabBlocks.CODE_DOOR.get()).build(null));
     //Gates
-    public static final RegistryObject<BlockEntityType<BarrierGateBE>> BARRIER_GATE_BE =
+    public static final Supplier<BlockEntityType<BarrierGateBE>> BARRIER_GATE_BE =
             BLOCK_ENTITIES.register("barrier_gate_be",
                     ()-> BlockEntityType.Builder.of(BarrierGateBE::new, LabBlocks.BARRIER_GATE.get()).build(null));
-    public static final RegistryObject<BlockEntityType<BarrierGateOffBE>> BARRIER_GATE_OFF =
+    public static final Supplier<BlockEntityType<BarrierGateOffBE>> BARRIER_GATE_OFF =
             BLOCK_ENTITIES.register("barrier_gate_off",
                     ()-> BlockEntityType.Builder.of(BarrierGateOffBE::new, LabBlocks.BARRIER_GATE_OFF.get()).build(null));
 

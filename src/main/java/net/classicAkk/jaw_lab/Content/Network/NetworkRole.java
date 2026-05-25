@@ -3,7 +3,6 @@ package net.classicAkk.jaw_lab.Content.Network;
 import java.util.Set;
 
 public enum NetworkRole {
-
     FOUNDER(Set.of(
             NetworkPermission.ADD_USER,
             NetworkPermission.REMOVE_USER,

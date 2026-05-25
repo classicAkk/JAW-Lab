@@ -1,7 +1,6 @@
 package net.classicAkk.jaw_lab.Content.Network;
 
 public class NetworkSecurity {
-
     public static boolean canAddUsers(NetworkUser actor) {return actor.getRole().hasPermission(NetworkPermission.ADD_USER);}
     public static boolean canRemoveUsers(NetworkUser actor) {return actor.getRole().hasPermission(NetworkPermission.REMOVE_USER);}
     public static boolean canRemoveAdmins(NetworkUser actor) {return actor.getRole().hasPermission(NetworkPermission.REMOVE_ADMIN);}

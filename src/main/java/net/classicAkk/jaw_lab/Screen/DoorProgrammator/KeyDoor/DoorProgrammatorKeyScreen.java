@@ -1,6 +1,7 @@
 package net.classicAkk.jaw_lab.Screen.DoorProgrammator.KeyDoor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/DoorProgrammator/KeyDoor/DoorProgrammatorKeyScreen.java
 import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.CodeDoorBE;
 import net.classicAkk.jaw_lab.Content.Interactions.DoorInteractions;
 import net.classicAkk.jaw_lab.Content.Interactions.KeycardInteractions;
@@ -10,21 +11,27 @@ import net.classicAkk.jaw_lab.Screen.DoorProgrammator.CodeDoor.DoorProgrammatorC
 import net.classicAkk.jaw_lab.Screen.Elements.GuiButton;
 import net.classicAkk.jaw_lab.Screen.ProcessingPackets.ProcessingPacket;
 import net.classicAkk.jaw_lab.Util.LabPackets;
+=======
+import net.awyvrix.jaw_lab.content.interactions.DoorInteractions;
+import net.awyvrix.jaw_lab.content.interactions.KeycardInteractions;
+import net.awyvrix.jaw_lab.content.networking.packet.doors.*;
+import net.awyvrix.jaw_lab.Lab;
+import net.awyvrix.jaw_lab.screen.elements.GuiButton;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/doorProgrammator/KeyDoor/DoorProgrammatorKeyScreen.java
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgrammatorKeyMenu> {
-    BlockPos pos = menu.blockEntity.getBlockPos();
     public int offsetX = 33;
     public int offsetY = 38;
     private String net;
@@ -34,7 +41,7 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
     private final Level level = DoorProgrammatorKeyMenu.getLevel();
 
     private final ResourceLocation TEXTURE =
-            new ResourceLocation(Lab.MOD_ID, "textures/gui/door_programmator.png");
+            ResourceLocation.fromNamespaceAndPath(Lab.MOD_ID, "textures/gui/door_programmator.png");
 
     public DoorProgrammatorKeyScreen(DoorProgrammatorKeyMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -65,7 +72,6 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderTooltip(guiGraphics, mouseX, mouseY);
     }
@@ -80,43 +86,42 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
     }
 
     private void renderElements(){
-        this.addRenderableWidget( //Reset button (network)
+        this.addRenderableWidget( // Reset button (network)
                 new GuiButton(TEXTURE, leftPos+offsetX+89, topPos+offsetY+13, 14, 14, 50, 208, 224, Component.empty(),
                         button -> {
-                            if (net != null) LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "resetDoor", net, player));
+                            if (net == null) return;
+                            PacketDistributor.sendToServer(new ResetDoorPacket(blockEntity.getBlockPos(), net));
                         }));
-        this.addRenderableWidget( //Auto-close button (mode)
+        this.addRenderableWidget( // Auto-close button (mode)
                 new GuiButton(TEXTURE, leftPos+offsetX+89, topPos+offsetY+29, 14, 14, 2, 208, 224, Component.empty(),
                         button -> {
-                            if (net != null) LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "switchAutoClose", net, player));
+                            if (net == null) return;
+                            PacketDistributor.sendToServer(new SwitchAutoClosePacket(blockEntity.getBlockPos()));
                         }));
 
-        this.addRenderableWidget( //Increase Level (mode)
+        this.addRenderableWidget( // Increase Level (mode)
                 new GuiButton(TEXTURE, leftPos+offsetX+8, topPos+offsetY+13, 14, 14, 18, 208, 224, Component.empty(),
                         button -> {
-                            if (net != null) LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "increment", net, player));
+                            if (net == null) return;
+                            PacketDistributor.sendToServer(new IncrementDoorLevelPacket(blockEntity.getBlockPos(), net));
                         }));
-        this.addRenderableWidget( //Decrease Level (mode)
+        this.addRenderableWidget( // Decrease Level (mode)
                 new GuiButton(TEXTURE, leftPos+offsetX+8, topPos+offsetY+29, 14, 14, 34, 208, 224, Component.empty(),
                         button -> {
-                            if (net != null) LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "decrement", net, player));
+                            if (net == null) return;
+                            PacketDistributor.sendToServer(new DecrementDoorLevelPacket(blockEntity.getBlockPos(), net));
                         }));
 
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/DoorProgrammator/KeyDoor/DoorProgrammatorKeyScreen.java
         this.addRenderableWidget( //Set Network (mode)
+=======
+        this.addRenderableWidget( // Set network (mode)
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/doorProgrammator/KeyDoor/DoorProgrammatorKeyScreen.java
                 new GuiButton(TEXTURE, leftPos+offsetX+86, topPos+offsetY+70, 11, 11, 66, 208, 224, Component.empty(),
                         button -> {
-                            if ((net != null || !net.isEmpty()) && !field.getValue().isEmpty() ) {
-                                LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "setNetwork", field.getValue(), net, player));
-                                if (DoorInteractions.canSetNetwork(blockEntity, level, field.getValue(), net, player)) {
-                                    net = field.getValue();
-                                }
-                            }
-                            if ((net == null || net.isEmpty()) && !field.getValue().isEmpty()) {
-                                LabPackets.INSTANCE.sendToServer(new ProcessingPacket(level, blockEntity, "setNetwork", field.getValue(), "", player));
-                                if (DoorInteractions.canSetNetwork(blockEntity, level, field.getValue(), "", player)) {
-                                    net = field.getValue();
-                                }
-                            }
+                            PacketDistributor.sendToServer(
+                                    new SetDoorNetworkPacket(blockEntity.getBlockPos(), field.getValue(), net == null ? "" : net)
+                            );
                         }));
 
         field = new EditBox(this.font, leftPos+offsetX+9, topPos+offsetY+70, 74, 11, Component.literal("Field"));
@@ -129,9 +134,7 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
             if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
                 return super.keyPressed(keyCode, scanCode, modifiers);
             }
-            if (keyCode == GLFW.GLFW_KEY_E) {
-                return true;
-            }
+            if (keyCode == GLFW.GLFW_KEY_E) return true;
             return field.keyPressed(keyCode, scanCode, modifiers) || field.canConsumeInput();
         }
 

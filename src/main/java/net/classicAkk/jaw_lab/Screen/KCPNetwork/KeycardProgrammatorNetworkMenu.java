@@ -1,8 +1,15 @@
 package net.classicAkk.jaw_lab.Screen.KCPNetwork;
 
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/KCPNetwork/KeycardProgrammatorNetworkMenu.java
 import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.KeycardProgrammatorBE;
 import net.classicAkk.jaw_lab.Content.Blocks.LabBlocks;
 import net.classicAkk.jaw_lab.Screen.LabMenuTypes;
+=======
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.KeycardProgrammatorBE;
+import net.awyvrix.jaw_lab.content.blocks.LabBlocks;
+import net.awyvrix.jaw_lab.content.network.NetworkRole;
+import net.awyvrix.jaw_lab.screen.LabMenuTypes;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/KCPNetwork/KeycardProgrammatorNetworkMenu.java
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -10,13 +17,16 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.SlotItemHandler;
 
 public class KeycardProgrammatorNetworkMenu extends AbstractContainerMenu {
     public final KeycardProgrammatorBE blockEntity;
     private final Level level;
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/KCPNetwork/KeycardProgrammatorNetworkMenu.java
     private static Level serverLevel;
+=======
+    private NetworkRole role;
+    private int accessLevel;
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/KCPNetwork/KeycardProgrammatorNetworkMenu.java
     private final ContainerData data;
 
     public KeycardProgrammatorNetworkMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
@@ -28,7 +38,7 @@ public class KeycardProgrammatorNetworkMenu extends AbstractContainerMenu {
 
         checkContainerSize(inv, 1);
         blockEntity = ((KeycardProgrammatorBE) entity);
-        this.level = inv.player.level();
+        this.level = blockEntity.getLevel();
         this.data = data;
         if (!blockEntity.getLevel().isClientSide()) {
             serverLevel = blockEntity.getLevel();
@@ -36,19 +46,36 @@ public class KeycardProgrammatorNetworkMenu extends AbstractContainerMenu {
 
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
-
-        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 8, 47));
-        });
-
         addDataSlots(data);
     }
 
+<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/KCPNetwork/KeycardProgrammatorNetworkMenu.java
     public static Level getServerLevel() {
         if (!serverLevel.isClientSide()) {
             return serverLevel;
         }
         return null;
+=======
+
+    public void setAccessLevel(int level) {
+        data.set(0, level);
+    }
+
+    public int getAccessLevel() {
+        return data.get(0);
+    }
+
+    public void setRole(NetworkRole role) {
+        data.set(1, role == null ? -1 : role.ordinal());
+    }
+
+    public NetworkRole getRole() {
+        int id = data.get(1);
+
+        if (id < 0) return null;
+
+        return NetworkRole.values()[id];
+>>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/KCPNetwork/KeycardProgrammatorNetworkMenu.java
     }
 
 
