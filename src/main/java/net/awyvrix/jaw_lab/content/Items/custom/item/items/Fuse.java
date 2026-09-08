@@ -1,13 +1,12 @@
-<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Items/custom/item/items/Fuse.java
-package net.classicAkk.jaw_lab.Content.Items.custom.item.items;
-=======
-package net.awyvrix.jaw_lab.content.items.custom.item.items;
->>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/Items/custom/item/items/Fuse.java
+package net.awyvrix.jaw_lab.content.Items.custom.item.items;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class Fuse extends Item {
@@ -16,8 +15,8 @@ public class Fuse extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("tooltip.lab.fuse.tooltip"));
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+        pTooltipComponents.add(Component.translatable("tooltip.lab.fuse.tooltip"));
+        super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
     }
 }

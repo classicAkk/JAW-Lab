@@ -1,5 +1,6 @@
 package net.awyvrix.jaw_lab.screen.processingPackets;
 
+import net.awyvrix.jaw_lab.Lab;
 import net.awyvrix.jaw_lab.content.interactions.DoorInteractions;
 import net.awyvrix.jaw_lab.content.interactions.KeycardInteractions;
 import net.awyvrix.jaw_lab.content.interactions.NetworkInteractions;
@@ -11,183 +12,174 @@ import net.awyvrix.jaw_lab.screen.doorProgrammator.KeyDoor.DoorProgrammatorKeyMe
 import net.awyvrix.jaw_lab.screen.KCPCopy.KeycardProgrammatorCopyMenu;
 import net.awyvrix.jaw_lab.screen.KCPMain.KeycardProgrammatorMainMenu;
 import net.awyvrix.jaw_lab.screen.KCPNetwork.KeycardProgrammatorNetworkMenu;
+import net.awyvrix.jaw_lab.util.LabPackets;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public class ProcessingPacket {
+    private final String type;
+    private final BlockPos pos;
+
     private int containerId;
-    private NetworkRole role;
-    private String type;
-    private String parameter;
-    private String parameter2;
-    private String networkName;
-    private Level level;
-    private ServerLevel serverLevel;
-    private MinecraftServer server;
-    private Player player;
-    private BlockEntity blockEntity;
+    private NetworkRole role = NetworkRole.UNKNOWN;
+    private String networkName = "none";
+    private String playerName = "";
 
-    public ProcessingPacket(int containerId, String type) {
+    public ProcessingPacket(String type, BlockPos pos) {
+        this.type = type;
+        this.pos = pos;
+    }
+
+    public ProcessingPacket(String type, BlockPos pos, int containerId) {
+        this.type = type;
+        this.pos = pos;
+
         this.containerId = containerId;
-        this.type = type;
     }
-    public ProcessingPacket(int containerId, String type, String parameter) {
+
+    public ProcessingPacket(String type, BlockPos pos, int containerId, String networkName) {
+        this.type = type;
+        this.pos = pos;
+
         this.containerId = containerId;
-        this.type = type;
-        this.parameter = parameter;
-    }
-    public ProcessingPacket(int containerId, String type, Player player, String parameter) {
-        this.containerId = containerId;
-        this.type = type;
-        this.player = player;
-        this.parameter = parameter;
-    }
-    public ProcessingPacket(Level level, Player player, String networkName, String type) {
-        this.type = type;
-        this.level = level;
-        this.player = player;
         this.networkName = networkName;
-        if (!level.isClientSide()) {
-            this.serverLevel = (ServerLevel) level;
-        }
     }
-    public ProcessingPacket(Level level, Player player, String networkName, String type, String parameter) {
+
+    public ProcessingPacket(String type, BlockPos pos, String networkName) {
         this.type = type;
-        this.level = level;
-        this.player = player;
+        this.pos = pos;
+
         this.networkName = networkName;
-        this.parameter = parameter;
-        if (!level.isClientSide()) {
-            this.serverLevel = (ServerLevel) level;
-        }
     }
-    public ProcessingPacket(Level level, Player player, String networkName, String type, String parameter, NetworkRole role) {
+
+    public ProcessingPacket(String type, BlockPos pos, String networkName, String playerName) {
         this.type = type;
-        this.level = level;
-        this.player = player;
+        this.pos = pos;
+
         this.networkName = networkName;
-        this.parameter = parameter;
+        this.playerName = playerName;
+    }
+
+    public ProcessingPacket(String type, BlockPos pos, String networkName, String playerName, NetworkRole role) {
+        this.type = type;
+        this.pos = pos;
+
+        this.networkName = networkName;
+        this.playerName = playerName;
         this.role = role;
-        if (!level.isClientSide()) {
-            this.serverLevel = (ServerLevel) level;
-        }
-    }
-    public ProcessingPacket(Level level, BlockEntity blockEntity, String type, String parameter, Player player) {
-        this.level = level;
-        this.blockEntity = blockEntity;
-        this.type = type;
-        this.parameter = parameter;
-        this.player = player;
-    }
-    public ProcessingPacket(Level level, BlockEntity blockEntity, String type, String parameter, String parameter2, Player player) {
-        this.level = level;
-        this.blockEntity = blockEntity;
-        this.type = type;
-        this.parameter = parameter;
-        this.parameter2 = parameter2;
-        this.player = player;
     }
 
-    public ProcessingPacket(int containerId, String type, String parameter, String parameter2, String networkName) {
-        this.containerId = containerId;
+    public ProcessingPacket(String type, BlockPos pos, int containerId, String networkName, String playerName, NetworkRole role) {
         this.type = type;
-        this.parameter = parameter;
-        this.parameter2 = parameter2;
+        this.pos = pos;
+
+        this.containerId = containerId;
         this.networkName = networkName;
+        this.playerName = playerName;
+        this.role = role;
     }
 
     public void encode(FriendlyByteBuf buf) {
-        buf.writeInt(containerId);
         buf.writeUtf(type);
+        buf.writeBlockPos(pos);
+        buf.writeInt(containerId);
 
-        buf.writeNullable(parameter, FriendlyByteBuf::writeUtf);
-        buf.writeNullable(parameter2, FriendlyByteBuf::writeUtf);
+        buf.writeEnum(role);
         buf.writeNullable(networkName, FriendlyByteBuf::writeUtf);
+        buf.writeNullable(playerName, FriendlyByteBuf::writeUtf);
     }
 
     public static ProcessingPacket decode(FriendlyByteBuf buf) {
-        int containerId = buf.readInt();
         String type = buf.readUtf();
-        String parameter = buf.readNullable(FriendlyByteBuf::readUtf);
-        String parameter2 = buf.readNullable(FriendlyByteBuf::readUtf);
-        String networkName = buf.readNullable(FriendlyByteBuf::readUtf);
+        BlockPos pos = buf.readBlockPos();
 
-        return new ProcessingPacket(containerId, type, parameter, parameter2, networkName);
+        int containerId = buf.readInt();
+        NetworkRole role = buf.readEnum(NetworkRole.class);
+        String networkName = buf.readNullable(FriendlyByteBuf::readUtf);
+        String playerName = buf.readNullable(FriendlyByteBuf::readUtf);
+
+        return new ProcessingPacket(type, pos, containerId, networkName, playerName, role);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer serverPlayer = ctx.get().getSender();
-            if (serverPlayer == null) {return;}
+    public void handle(CustomPayloadEvent.Context ctx) {
+        ctx.enqueueWork(() -> {
+            ServerPlayer serverPlayer = ctx.getSender();
+            
+            if (serverPlayer == null) return;
+            ServerLevel serverLevel = serverPlayer.serverLevel();
+            BlockEntity blockEntity = serverLevel.getBlockEntity(pos);
 
+            if (blockEntity == null) return;
             if (serverPlayer.containerMenu instanceof KeycardProgrammatorMainMenu MainMenu) {
                 switch(type) {
-                    case("resetKeycard"):{KeycardInteractions.resetKeycard(MainMenu, serverPlayer, 36); break;}
-                    case("uuid"): {KeycardInteractions.setUUID(MainMenu, serverPlayer, 36); break;}
-                    case("owner"):{KeycardInteractions.setUsername(MainMenu, 36, parameter); break;}
-                    case("increaseLevel"): {KeycardInteractions.increaseLevel(MainMenu, 36, serverLevel, networkName, player); break;}
-                    case("decreaseLevel"): {KeycardInteractions.decreaseLevel(MainMenu, 36, serverLevel, networkName, player); break;}
-                    case("resetLevel"): {KeycardInteractions.resetLevel(MainMenu, 36); break;}
-                    case("addNetwork"): {KeycardInteractions.addNetwork(MainMenu, level, 36, parameter, player); break;}
-                    case("removeNetwork"): {KeycardInteractions.removeNetwork(MainMenu, 36); break;}
-                    default: {System.out.print("Jaw Lab: cannot find case in net/classic_akk/jaw_lab/screen/processingPackets\n"); break;}
+                    case("resetKeycard") -> KeycardInteractions.resetKeycard(MainMenu, serverPlayer, 36);
+                    case("uuid") -> KeycardInteractions.setUUID(MainMenu, serverPlayer, 36);
+                    case("owner") -> KeycardInteractions.setUsername(MainMenu, 36, playerName);
+                    case("increaseLevel") -> KeycardInteractions.increaseLevel(MainMenu, 36, serverLevel, networkName, serverPlayer);
+                    case("decreaseLevel") -> KeycardInteractions.decreaseLevel(MainMenu, 36, serverLevel, networkName, serverPlayer);
+                    case("resetLevel") -> KeycardInteractions.resetLevel(MainMenu, 36);
+                    case("addNetwork") -> KeycardInteractions.addNetwork(MainMenu, serverLevel, 36, networkName, serverPlayer);
+                    case("removeNetwork") -> KeycardInteractions.removeNetwork(MainMenu, 36);
+                    default -> Lab.LOGGER.error("Cannot find case to process packet caused by: {}", type);
                 }
             }
-            if (serverPlayer.containerMenu instanceof KeycardProgrammatorNetworkMenu NetworkMenu) {
+            if (serverPlayer.containerMenu instanceof KeycardProgrammatorNetworkMenu) {
                 switch(type) {
-                    case("createNetwork"): {NetworkInteractions.createNetwork(serverLevel, networkName, player); break;}
-                    case("deleteNetwork"): {NetworkInteractions.deleteNetwork(serverLevel, networkName, player); break;}
-                    case("addUser"): {UUIDFetcher.getPlayerUUIDAsync(ctx.get().getSender().getServer(), parameter).thenAccept(uuid -> {
-                        if (uuid != null) {NetworkInteractions.addUser(serverLevel, uuid, parameter, networkName);}
-                        else {System.out.println("Cannot get the UUID of "+parameter);}});break;}
-                    case("removeUser"): {NetworkInteractions.removeUser(serverLevel, networkName, player, parameter); break;}
-                    case("increaseUserLevel"): {NetworkInteractions.increaseUserLevel(serverLevel, networkName, player, parameter); break;}
-                    case("decreaseUserLevel"): {NetworkInteractions.decreaseUserLevel(serverLevel, networkName, player, parameter); break;}
-                    case("setRole"): {NetworkInteractions.setRole(serverLevel, networkName, player, parameter, role); break;}
-                    default: {System.out.print("Jaw Lab: cannot find case in net/classic_akk/jaw_lab/screen/processingPackets\n"); break;}
+                    case("createNetwork") -> NetworkInteractions.createNetwork(serverLevel, networkName, serverPlayer);
+                    case("deleteNetwork") -> NetworkInteractions.deleteNetwork(serverLevel, networkName, serverPlayer);
+                    case("addUser") -> 
+                        UUIDFetcher.getPlayerUUIDAsync(ctx.getSender().getServer(), playerName).thenAccept(uuid -> {
+
+                        if (uuid != null) NetworkInteractions.addUser(serverLevel, uuid, playerName, networkName);
+                        else System.out.println("Cannot get the UUID of "+playerName);
+                    });
+                    case("removeUser") -> NetworkInteractions.removeUser(serverLevel, networkName, serverPlayer, playerName);
+                    case("increaseUserLevel") -> NetworkInteractions.increaseUserLevel(serverLevel, networkName, serverPlayer, playerName);
+                    case("decreaseUserLevel") -> NetworkInteractions.decreaseUserLevel(serverLevel, networkName, serverPlayer, playerName);
+                    case("setRole") -> NetworkInteractions.setRole(serverLevel, networkName, serverPlayer, playerName, role);
+                    default -> Lab.LOGGER.error("Cannot find case to process packet caused by: {}", type);
                 }
             }
             if (serverPlayer.containerMenu instanceof KeycardProgrammatorCopyMenu CopyMenu) {
                 switch(type) {
-                    case("copyCard"): {KeycardInteractions.copyCard(CopyMenu, 36); break;}
-                    default: {System.out.print("Jaw Lab: cannot find case in net/classic_akk/jaw_lab/screen/processingPackets\n"); break;}
+                    case("copyCard") -> KeycardInteractions.copyCard(CopyMenu, 36);
+                    default -> Lab.LOGGER.error("Cannot find case to process packet caused by: {}", type);
                 }
             }
-            if (serverPlayer.containerMenu instanceof CodeDoorMenu CodeDoorMenu) {
+            if (serverPlayer.containerMenu instanceof CodeDoorMenu) {
                 switch(type) {
-                    case("openDoor"): {DoorInteractions.setDoor(blockEntity, level, player);break;}
-                    case("setCode"): {DoorInteractions.setCode(blockEntity, level, parameter, player);break;}
-                    case("error"): {DoorInteractions.error(blockEntity, level, player);break;}
-                    default: {System.out.print("Jaw Lab: cannot find case in net/classic_akk/jaw_lab/screen/processingPackets\n"); break;}
+                    case("setCode") -> DoorInteractions.setCode(blockEntity, playerName, serverPlayer); // player = passcode
+                    case("openDoor") -> DoorInteractions.setDoor(blockEntity, serverLevel, serverPlayer);
+                    case("error") -> DoorInteractions.error(blockEntity, serverLevel, serverPlayer);
+                    default -> Lab.LOGGER.error("Cannot find case to process packet caused by: {}", type);
                 }
             }
-            if (serverPlayer.containerMenu instanceof DoorProgrammatorCodeMenu codeMenu) {
+            if (serverPlayer.containerMenu instanceof DoorProgrammatorCodeMenu) {
                 switch(type) {
-                    case("switchAutoClose"): {DoorInteractions.switchAutoClose(blockEntity, level);break;}
-                    case("resetDoor"): {DoorInteractions.resetDoor(blockEntity, level, parameter, player);break;}
-                    case("setNetwork"): {DoorInteractions.setNetwork(blockEntity, level, parameter, parameter2, player);break;}
-                    default: {System.out.print("Jaw Lab: cannot find case in net/classic_akk/jaw_lab/screen/processingPackets\n"); break;}
+                    case("switchAutoClose") -> DoorInteractions.switchAutoClose(blockEntity, serverLevel, serverPlayer);
+                    case("resetDoor") -> DoorInteractions.resetDoor(blockEntity, serverLevel, serverPlayer);
+                    case("setNetwork") -> DoorInteractions.setNetwork(blockEntity, serverLevel, networkName, serverPlayer);
+                    default -> Lab.LOGGER.error("Cannot find case to process packet caused by: {}", type);
                 }
             }
-            if (serverPlayer.containerMenu instanceof DoorProgrammatorKeyMenu keyMenu) {
+            if (serverPlayer.containerMenu instanceof DoorProgrammatorKeyMenu) {
                 switch(type) {
-                    case("switchAutoClose"): {DoorInteractions.switchAutoClose(blockEntity, level);break;}
-                    case("resetDoor"): {DoorInteractions.resetDoor(blockEntity, level, parameter, player);break;}
-                    case("increment"): {DoorInteractions.incrementLevel(blockEntity, level, parameter, player);break;}
-                    case("decrement"): {DoorInteractions.decrementLevel(blockEntity, level, parameter, player);break;}
-                    case("setNetwork"): {DoorInteractions.setNetwork(blockEntity, level, parameter, parameter2, player);break;}
-                    default: {System.out.print("Jaw Lab: cannot find case in net/classic_akk/jaw_lab/screen/processingPackets\n"); break;}
+                    case("switchAutoClose") -> DoorInteractions.switchAutoClose(blockEntity, serverLevel, serverPlayer);
+                    case("resetDoor") -> DoorInteractions.resetDoor(blockEntity, serverLevel, serverPlayer);
+                    case("increment") -> DoorInteractions.incrementLevel(blockEntity, serverLevel, serverPlayer);
+                    case("decrement") -> DoorInteractions.decrementLevel(blockEntity, serverLevel, serverPlayer);
+                    case("setNetwork") -> DoorInteractions.setNetwork(blockEntity, serverLevel, networkName, serverPlayer);
+                    default -> Lab.LOGGER.error("Cannot find case to process packet caused by: {}", type);
                 }
             }
+            TaskProcess.tasks.add(new Task(networkName, playerName, serverPlayer));
         });
-        ctx.get().setPacketHandled(true);
+
+        ctx.setPacketHandled(true);
     }
 }

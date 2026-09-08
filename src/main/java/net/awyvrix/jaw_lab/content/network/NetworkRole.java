@@ -3,6 +3,7 @@ package net.awyvrix.jaw_lab.content.network;
 import java.util.Set;
 
 public enum NetworkRole {
+
     FOUNDER(Set.of(
             NetworkPermission.ADD_USER,
             NetworkPermission.REMOVE_USER,
@@ -31,7 +32,9 @@ public enum NetworkRole {
             NetworkPermission.ADD_USER
     )),
 
-    MEMBER(Set.of());
+    MEMBER(Set.of()),
+
+    UNKNOWN(Set.of());
 
     private final Set<NetworkPermission> permissions;
 

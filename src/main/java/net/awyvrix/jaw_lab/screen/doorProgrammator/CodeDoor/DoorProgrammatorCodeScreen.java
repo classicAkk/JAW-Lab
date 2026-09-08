@@ -1,26 +1,13 @@
-package net.classicAkk.jaw_lab.Screen.DoorProgrammator.CodeDoor;
+package net.awyvrix.jaw_lab.screen.doorProgrammator.CodeDoor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/DoorProgrammator/CodeDoor/DoorProgrammatorCodeScreen.java
-import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.CodeDoorBE;
-import net.classicAkk.jaw_lab.Content.Interactions.DoorInteractions;
-import net.classicAkk.jaw_lab.Content.Network.Network;
-import net.classicAkk.jaw_lab.Lab;
-import net.classicAkk.jaw_lab.Screen.CodeDoor.CodeDoorMenu;
-import net.classicAkk.jaw_lab.Screen.Elements.GuiButton;
-import net.classicAkk.jaw_lab.Screen.ProcessingPackets.OpenMainMenuPacket;
-import net.classicAkk.jaw_lab.Screen.ProcessingPackets.OpenNetworkMenuPacket;
-import net.classicAkk.jaw_lab.Screen.ProcessingPackets.ProcessingPacket;
-import net.classicAkk.jaw_lab.Util.LabPackets;
-=======
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.doors.CodeDoorBE;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.Doors.CodeDoorBE;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.Util.DoorBlock;
 import net.awyvrix.jaw_lab.content.interactions.DoorInteractions;
-import net.awyvrix.jaw_lab.content.networking.packet.doors.ResetDoorPacket;
-import net.awyvrix.jaw_lab.content.networking.packet.doors.SetDoorNetworkPacket;
-import net.awyvrix.jaw_lab.content.networking.packet.doors.SwitchAutoClosePacket;
 import net.awyvrix.jaw_lab.Lab;
 import net.awyvrix.jaw_lab.screen.elements.GuiButton;
->>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/doorProgrammator/CodeDoor/DoorProgrammatorCodeScreen.java
+import net.awyvrix.jaw_lab.screen.processingPackets.ProcessingPacket;
+import net.awyvrix.jaw_lab.util.LabPackets;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -30,20 +17,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 public class DoorProgrammatorCodeScreen extends AbstractContainerScreen<DoorProgrammatorCodeMenu> {
     public int offsetX = 55;
     public int offsetY = 55;
-    private String net;
     private EditBox field;
-    private final Player player = DoorProgrammatorCodeMenu.getPlayer();
+
     private final BlockEntity blockEntity = DoorProgrammatorCodeMenu.getBE();
+    private final BlockPos pos = blockEntity.getBlockPos();
 
     private final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Lab.MOD_ID, "textures/gui/door_programmator.png");
+            new ResourceLocation(Lab.MOD_ID, "textures/gui/door_programmator.png");
 
     public DoorProgrammatorCodeScreen(DoorProgrammatorCodeMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -55,7 +42,6 @@ public class DoorProgrammatorCodeScreen extends AbstractContainerScreen<DoorProg
         this.inventoryLabelY = 10000;
         this.titleLabelY = 4;
         this.titleLabelX = 6500;
-        if (blockEntity instanceof CodeDoorBE codeDoorBE) net = codeDoorBE.getNetwork();
 
         renderElements();
     }
@@ -68,43 +54,35 @@ public class DoorProgrammatorCodeScreen extends AbstractContainerScreen<DoorProg
         int x = (width  - 66) / 2;
         int y = (height - 56) / 2;
 
-        String network = DoorInteractions.getNetwork(blockEntity);
-        if (network != null) guiGraphics.drawString(this.font, network, leftPos+offsetX+8, topPos+offsetY+29, 0xFFA500);
+        if (!(blockEntity instanceof DoorBlock doorBlock)) return;
+        guiGraphics.drawString(this.font, doorBlock.network(), leftPos+offsetX+8, topPos+offsetY+29, 0xFFA500);
         guiGraphics.blit(TEXTURE, x, y, 148, 0, imageWidth-84, imageHeight);
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        renderBackground(guiGraphics, mouseX, mouseY, delta);
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
-    private void renderElements(){
-        this.addRenderableWidget( // Reset button (network)
+    private void renderElements() {
+        this.addRenderableWidget( //Auto-close button (mode)
                 new GuiButton(TEXTURE, leftPos+offsetX+18, topPos+offsetY+6, 14, 14, 2, 208, 224, Component.empty(),
                         button -> {
-                            if (net == null) return;
-                            PacketDistributor.sendToServer(new SwitchAutoClosePacket(blockEntity.getBlockPos())
-                            );
+                            LabPackets.sendToServer(new ProcessingPacket("switchAutoClose", pos));
                         }));
 
-        this.addRenderableWidget( // Auto-close button (mode)
+        this.addRenderableWidget( //Reset button (network)
                 new GuiButton(TEXTURE, leftPos+offsetX+34, topPos+offsetY+6, 14, 14, 50, 208, 224, Component.empty(),
                         button -> {
-                            if (net == null) return;
-                            PacketDistributor.sendToServer(new ResetDoorPacket(blockEntity.getBlockPos(), net));
+                            LabPackets.sendToServer(new ProcessingPacket("resetDoor", pos));
                         }));
-<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/DoorProgrammator/CodeDoor/DoorProgrammatorCodeScreen.java
-        this.addRenderableWidget( //Set Network (mode)
-=======
-
-        this.addRenderableWidget( // Set network (mode)
->>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/doorProgrammator/CodeDoor/DoorProgrammatorCodeScreen.java
+        this.addRenderableWidget( //Set network (mode)
                 new GuiButton(TEXTURE, leftPos+offsetX+28, topPos+offsetY+56, 11, 11, 66, 208, 224, Component.empty(),
                         button -> {
-                            PacketDistributor.sendToServer(
-                                    new SetDoorNetworkPacket(blockEntity.getBlockPos(), field.getValue(), net == null ? "" : net)
-                            );
+                            if (field.getValue().isEmpty()) return;
+                            LabPackets.sendToServer(new ProcessingPacket("setNetwork", pos, field.getValue()));
                         }));
 
         field = new EditBox(this.font, leftPos+offsetX+6, topPos+offsetY+42, 54, 11, Component.literal("Field"));
@@ -117,7 +95,9 @@ public class DoorProgrammatorCodeScreen extends AbstractContainerScreen<DoorProg
             if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
                 return super.keyPressed(keyCode, scanCode, modifiers);
             }
-            if (keyCode == GLFW.GLFW_KEY_E) return true;
+            if (keyCode == GLFW.GLFW_KEY_E) {
+                return true;
+            }
             return field.keyPressed(keyCode, scanCode, modifiers) || field.canConsumeInput();
         }
 

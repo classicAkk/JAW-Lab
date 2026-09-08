@@ -1,12 +1,7 @@
-package net.classicAkk.jaw_lab.Content.Blocks.Blocks.Doors;
+package net.awyvrix.jaw_lab.content.blocks.blocks.doors;
 
-<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Blocks/Blocks/Doors/DoorBottom.java
-import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Util.DoorState;
-import net.classicAkk.jaw_lab.Content.Blocks.LabBlocks;
-=======
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.util.DoorState;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.Util.DoorState;
 import net.awyvrix.jaw_lab.content.blocks.LabBlocks;
->>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/blocks/blocks/doors/DoorBottom.java
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -122,12 +117,7 @@ public class DoorBottom extends Block {
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        BlockState top = LabBlocks.KEY_DOOR.get()
-                .defaultBlockState()
-                .setValue(KeyDoor.FACING, state.getValue(DoorBottom.FACING))
-                .setValue(KeyDoor.STATE, DoorState.CLOSED);
-
-        level.setBlock(pos.above(), top, 3);
+        level.setBlock(pos.above(), LabBlocks.KEY_DOOR.get().withPropertiesOf(state).setValue(STATE, DoorState.CLOSED), 3);
     }
 
     @Override

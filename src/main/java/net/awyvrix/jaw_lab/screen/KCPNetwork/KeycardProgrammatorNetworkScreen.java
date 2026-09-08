@@ -1,23 +1,14 @@
-package net.classicAkk.jaw_lab.Screen.KCPNetwork;
+package net.awyvrix.jaw_lab.screen.KCPNetwork;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/KCPNetwork/KeycardProgrammatorNetworkScreen.java
-import net.classicAkk.jaw_lab.Content.Interactions.NetworkInteractions;
-import net.classicAkk.jaw_lab.Content.Network.NetworkRole;
-import net.classicAkk.jaw_lab.Lab;
-import net.classicAkk.jaw_lab.Screen.Elements.GuiButton;
-import net.classicAkk.jaw_lab.Screen.ProcessingPackets.OpenCopyMenuPacket;
-import net.classicAkk.jaw_lab.Screen.ProcessingPackets.OpenMainMenuPacket;
-import net.classicAkk.jaw_lab.Screen.ProcessingPackets.ProcessingPacket;
-import net.classicAkk.jaw_lab.Util.LabPackets;
-=======
+import net.awyvrix.jaw_lab.content.interactions.NetworkInteractions;
 import net.awyvrix.jaw_lab.content.network.NetworkRole;
-import net.awyvrix.jaw_lab.content.networking.packet.menu.OpenCopyMenuPacket;
-import net.awyvrix.jaw_lab.content.networking.packet.menu.OpenMainMenuPacket;
-import net.awyvrix.jaw_lab.content.networking.packet.network.*;
 import net.awyvrix.jaw_lab.Lab;
 import net.awyvrix.jaw_lab.screen.elements.GuiButton;
->>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/KCPNetwork/KeycardProgrammatorNetworkScreen.java
+import net.awyvrix.jaw_lab.screen.processingPackets.OpenCopyMenuPacket;
+import net.awyvrix.jaw_lab.screen.processingPackets.OpenMainMenuPacket;
+import net.awyvrix.jaw_lab.screen.processingPackets.ProcessingPacket;
+import net.awyvrix.jaw_lab.util.LabPackets;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -26,28 +17,24 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.world.level.Level;
 import org.lwjgl.glfw.GLFW;
 
 public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<KeycardProgrammatorNetworkMenu> {
     private EditBox field;
-    private Player player;
+
     private String network = "none";
     private String user = "none";
-<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/KCPNetwork/KeycardProgrammatorNetworkScreen.java
-    private NetworkRole role = null;
-    private int cLevel = 0;
-    Level level = KeycardProgrammatorNetworkMenu.getServerLevel();
-    ServerLevel serverLevel = (ServerLevel) KeycardProgrammatorNetworkMenu.getServerLevel();
-=======
->>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/KCPNetwork/KeycardProgrammatorNetworkScreen.java
+    private NetworkRole role = NetworkRole.UNKNOWN;
+    private int accessLevel = 0;
 
     BlockPos pos = menu.blockEntity.getBlockPos();
 
     private final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Lab.MOD_ID, "textures/gui/keycard_programmator/kcp_network.png");
+            new ResourceLocation(Lab.MOD_ID, "textures/gui/keycard_programmator/kcp_network.png");
 
     public KeycardProgrammatorNetworkScreen(KeycardProgrammatorNetworkMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -55,8 +42,6 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
 
     @Override
     protected void init() {
-        player = Minecraft.getInstance().player;
-
         super.init();
         this.inventoryLabelY = 10000;
         this.titleLabelY = 4;
@@ -78,6 +63,7 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        renderBackground(guiGraphics, mouseX, mouseY, delta);
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderTooltip(guiGraphics, mouseX, mouseY);
         renderTextElements(guiGraphics);
@@ -105,52 +91,37 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
     }
 
     public NetworkRole incrementRole(NetworkRole role) {
-        if (role == NetworkRole.FOUNDER) return null;
-        if (role == NetworkRole.ADMIN) return NetworkRole.FOUNDER;
-        if (role == NetworkRole.MODERATOR) return NetworkRole.ADMIN;
-        if (role == NetworkRole.MEMBER) return NetworkRole.MODERATOR;
-        return role;
+        return NetworkRole.values()[role.ordinal()+1];
     }
     public NetworkRole decrementRole(NetworkRole role) {
-        if (role == NetworkRole.FOUNDER) return NetworkRole.ADMIN;
-        if (role == NetworkRole.ADMIN) return NetworkRole.MODERATOR;
-        if (role == NetworkRole.MODERATOR) return NetworkRole.MEMBER;
-        return role;
-    }
-    public String stringRole(NetworkRole role) {
-        if (role == NetworkRole.FOUNDER) return "Founder";
-        if (role == NetworkRole.ADMIN) return "Admin";
-        if (role == NetworkRole.MODERATOR) return "Moderator";
-        if (role == NetworkRole.MEMBER) return "Member";
-        return "none";
+        return NetworkRole.values()[role.ordinal()-1];
     }
 
     private void renderTextElements(GuiGraphics guiGraphics) {
-        NetworkRole role = menu.getRole();
-        int cLevel = menu.getAccessLevel();
-
         guiGraphics.drawString(this.font, network, leftPos+63, topPos+16, colorPicker(network)); //network
         guiGraphics.drawString(this.font, user, leftPos+63, topPos+28, colorPicker(network));
         //guiGraphics.drawString(this.font, "Role:", leftPos+63(88), topPos+40, 0xFFFFFF); //role
-        guiGraphics.drawString(this.font, stringRole(role), leftPos+63, topPos+40, colorPicker(stringRole(role)));
+        guiGraphics.drawString(this.font, role.name(), leftPos+63, topPos+40, colorPicker(role.name()));
         guiGraphics.drawString(this.font, "Lvl:", leftPos+132, topPos+40, 0xFFFFFF); //level
-        guiGraphics.drawString(this.font, String.valueOf(cLevel), leftPos+151, topPos+40, colorPicker(cLevel));
+        guiGraphics.drawString(this.font, String.valueOf(accessLevel), leftPos+151, topPos+40, colorPicker(accessLevel));
     }
 
     private void renderElements(){
-        this.addRenderableWidget( // Plus button (network)
+        this.addRenderableWidget( //plus button (network)
                 new GuiButton(TEXTURE, leftPos+27, topPos+50, 14, 14, 28, 172, 188, Component.empty(),
                         button -> {
-                            if (field.getValue().isBlank()) return;
-                            user = player.getName().getString();
-                            network = field.getValue();
-                            PacketDistributor.sendToServer(new CreateNetworkPacket(network));
+                            if (!field.getValue().isBlank()) {
+                                String network = field.getValue();
+                                LabPackets.sendToServer(new ProcessingPacket("createNetwork", pos, network));
+                            }
                         }));
-        this.addRenderableWidget( // Minus button (network)
+        this.addRenderableWidget( //minus button (network)
                 new GuiButton(TEXTURE, leftPos+27, topPos+66, 14, 14, 44, 172, 188, Component.empty(),
                         button -> {
-                            if (network.equals("none")) return;
-                            PacketDistributor.sendToServer(new DeleteNetworkPacket(network));
+                            if (!network.equals("none")) {
+                                String network = field.getValue();
+                                LabPackets.sendToServer(new ProcessingPacket("deleteNetwork", pos, network));
+                            }
                         }));
         this.addRenderableWidget( //lock minus button (network)
                 new GuiButton(TEXTURE, leftPos+11, topPos+66, 14, 14, 60, 172, 188, Component.empty(),
@@ -159,25 +130,25 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
         this.addRenderableWidget( //plus button (user)
                 new GuiButton(TEXTURE, leftPos+43, topPos+50, 14, 14, 28, 172, 188, Component.empty(),
                         button -> {
-                            if (!field.getValue().isBlank() && !network.equals("none")) {
-                                user = field.getValue();
-                                PacketDistributor.sendToServer(new AddUserPacket(network, user));
+                            if (!network.equals("none") && !field.getValue().isBlank()) {
+                                String user = field.getValue();
+                                LabPackets.sendToServer(new ProcessingPacket("addUser", pos, network, user));
                             }
                         }));
         this.addRenderableWidget( //minus button (user)
                 new GuiButton(TEXTURE, leftPos+43, topPos+66, 14, 14, 44, 172, 188, Component.empty(),
                         button -> {
-                            if (!network.equals("none") && !user.equals("none")) {
-                                PacketDistributor.sendToServer(new RemoveUserPacket(network, user));
+                            if (!network.equals("none") && !field.getValue().isBlank()) {
+                                String user = field.getValue();
+                                LabPackets.sendToServer(new ProcessingPacket("removeUser", pos, network, user));
                             }
                         }));
         this.addRenderableWidget( //find button (user)
                 new GuiButton(TEXTURE, leftPos+126, topPos+53, 10, 10, 118, 172, 188, Component.empty(),
                         button -> {
                             if (!field.getValue().isBlank() && !network.equals("none")) {
-                                user = field.getValue();
-
-                                PacketDistributor.sendToServer(new FindUserPacket(network, user));
+                                String user = field.getValue();
+                                LabPackets.sendToServer(new ProcessingPacket("update", pos, network, user));
                             }
                         }));
 
@@ -185,14 +156,14 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                 new GuiButton(TEXTURE, leftPos+147, topPos+53, 10, 10, 76, 172, 188, Component.empty(),
                         button -> {
                             if (!network.equals("none") && !user.equals("none")) {
-                                PacketDistributor.sendToServer(new IncreaseUserLevelPacket(network, user));
+                                LabPackets.sendToServer(new ProcessingPacket("increaseUserLevel", pos, network, user));
                             }
                         }));
         this.addRenderableWidget( //decrease button (level)
                 new GuiButton(TEXTURE, leftPos+159, topPos+53, 10, 10, 88, 172, 188, Component.empty(),
                         button -> {
                             if (!network.equals("none") && !user.equals("none")) {
-                                PacketDistributor.sendToServer(new DecreaseUserLevelPacket(network, user));
+                                LabPackets.sendToServer(new ProcessingPacket("decreaseUserLevel", pos, network, user));
                             }
                         }));
 
@@ -200,19 +171,16 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                 new GuiButton(TEXTURE, leftPos+138, topPos+52, 7, 5, 100, 172, 188, Component.empty(),
                         button -> {
                             if (!network.equals("none") && !user.equals("none")) {
-                                NetworkRole role = menu.getRole();
                                 NetworkRole newRole = incrementRole(role);
-                                PacketDistributor.sendToServer(new SetUserRolePacket(network, user, newRole));
-                                System.out.println("add");
+                                LabPackets.sendToServer(new ProcessingPacket("setRole", pos, network, user, newRole));
                             }
                         }));
         this.addRenderableWidget( //role button (decrease)
                 new GuiButton(TEXTURE, leftPos+138, topPos+59, 7, 5, 109, 172, 188, Component.empty(),
                         button -> {
                             if (!network.equals("none") && !user.equals("none")) {
-                                NetworkRole role = menu.getRole();
                                 NetworkRole newRole = decrementRole(role);
-                                PacketDistributor.sendToServer(new SetUserRolePacket(network, user, newRole));
+                                LabPackets.sendToServer(new ProcessingPacket("setRole", pos, network, user, newRole));
                             }
                         }));
 
@@ -220,15 +188,15 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
         this.addRenderableWidget( //next button (mode)
                 new GuiButton(TEXTURE, leftPos+159, topPos+66, 10, 14, 4, 172, 188, Component.empty(),
                         button -> {
-                            PacketDistributor.sendToServer(new OpenMainMenuPacket(pos));
+                            LabPackets.sendToServer(new OpenMainMenuPacket(pos));
                         }));
         this.addRenderableWidget( //previous button (mode)
                 new GuiButton(TEXTURE, leftPos+147, topPos+66, 10, 14, 16, 172, 188, Component.empty(),
                         button -> {
-                            PacketDistributor.sendToServer(new OpenCopyMenuPacket(pos));
+                            LabPackets.sendToServer(new OpenCopyMenuPacket(pos));
                         }));
 
-        field = new EditBox(this.font, leftPos+59, topPos+66, 86, 14, Component.literal("Field"));
+        field = new EditBox(this.font, leftPos+60, topPos+67, 84, 12, Component.literal("Field"));
         field.setMaxLength(18);field.setBordered(true);field.setVisible(true);field.setTextColor(0xFFFFFF);this.addRenderableWidget(field);
     }
 
@@ -239,10 +207,19 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                 return super.keyPressed(keyCode, scanCode, modifiers);
             }
 
-            if (keyCode == GLFW.GLFW_KEY_E) return true;
+            if (keyCode == GLFW.GLFW_KEY_E) {
+                return true;
+            }
             return field.keyPressed(keyCode, scanCode, modifiers) || field.canConsumeInput();
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    public void updateUserInfo(String network, String user, NetworkRole role, int accessLevel) {
+        this.network = network;
+        this.user = user;
+        this.role = role;
+        this.accessLevel = accessLevel;
     }
 }

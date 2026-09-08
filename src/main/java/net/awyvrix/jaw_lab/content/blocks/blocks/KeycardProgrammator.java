@@ -1,19 +1,20 @@
-package net.classicAkk.jaw_lab.Content.Blocks.Blocks;
+package net.awyvrix.jaw_lab.content.blocks.blocks;
 
-<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Content/Blocks/Blocks/KeycardProgrammator.java
-import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.KeycardProgrammatorBE;
-=======
 import com.mojang.serialization.MapCodec;
 import net.awyvrix.jaw_lab.content.blocks.blockEntities.KeycardProgrammatorBE;
 import net.awyvrix.jaw_lab.screen.KCPMain.KeycardProgrammatorMainMenu;
->>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/content/blocks/blocks/KeycardProgrammator.java
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -78,6 +79,11 @@ public class KeycardProgrammator extends BaseEntityBlock {
     }
 
     @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return null;
+    }
+
+    @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return switch (pState.getValue(FACING)) {
             case EAST -> EAST;
@@ -127,27 +133,37 @@ public class KeycardProgrammator extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
-        if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.PASS;
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!level.isClientSide()) {
+            BlockEntity entity = level.getBlockEntity(pos);
 
-        serverPlayer.openMenu(new SimpleMenuProvider((id, inv, pPlayer) ->
-                new KeycardProgrammatorMainMenu(id, inv, level.getBlockEntity(pos)), Component.literal("Keycard")), pos);
+            if (entity instanceof KeycardProgrammatorBE) {
+                ContainerData data = new SimpleContainerData(2);
+                ((ServerPlayer) player).openMenu(
+                        new MenuProvider() {
 
-        return InteractionResult.CONSUME;
+                            @Override
+                            public Component getDisplayName() {
+                                return Component.translatable("block.lab.ui.kcp");
+                            }
+
+                            @Override
+                            public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+                                return new KeycardProgrammatorMainMenu(containerId, inventory, entity, data);
+                            }
+                        }, buf -> buf.writeBlockPos(pos)
+                );
+            } else {
+                throw new IllegalStateException("Our Container provider is missing!");
+            }
+        }
+
+        return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new KeycardProgrammatorBE(pPos, pState);
-    }
-
-    public static final MapCodec<KeycardProgrammator> CODEC =
-            simpleCodec(KeycardProgrammator::new);
-
-    @Override
-    public MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 }

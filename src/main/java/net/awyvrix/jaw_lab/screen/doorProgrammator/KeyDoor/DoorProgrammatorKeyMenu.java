@@ -1,16 +1,8 @@
-package net.classicAkk.jaw_lab.Screen.DoorProgrammator.KeyDoor;
+package net.awyvrix.jaw_lab.screen.doorProgrammator.KeyDoor;
 
-<<<<<<< Updated upstream:src/main/java/net/classicAkk/jaw_lab/Screen/DoorProgrammator/KeyDoor/DoorProgrammatorKeyMenu.java
-import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.Doors.KeyDoorBE;
-import net.classicAkk.jaw_lab.Content.Blocks.BlockEntities.KeycardProgrammatorBE;
-import net.classicAkk.jaw_lab.Content.Interactions.DoorInteractions;
-import net.classicAkk.jaw_lab.Screen.LabMenuTypes;
-=======
-import net.awyvrix.jaw_lab.content.blocks.blockEntities.doors.KeyDoorBE;
+import net.awyvrix.jaw_lab.content.blocks.blockEntities.Doors.KeyDoorBE;
 import net.awyvrix.jaw_lab.screen.LabMenuTypes;
->>>>>>> Stashed changes:src/main/java/net/awyvrix/jaw_lab/screen/doorProgrammator/KeyDoor/DoorProgrammatorKeyMenu.java
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;

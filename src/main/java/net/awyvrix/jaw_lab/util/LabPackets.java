@@ -1,24 +1,20 @@
 package net.awyvrix.jaw_lab.util;
 
 import net.awyvrix.jaw_lab.Lab;
-import net.awyvrix.jaw_lab.screen.processingPackets.OpenCopyMenuPacket;
-import net.awyvrix.jaw_lab.screen.processingPackets.OpenMainMenuPacket;
-import net.awyvrix.jaw_lab.screen.processingPackets.OpenNetworkMenuPacket;
-import net.awyvrix.jaw_lab.screen.processingPackets.ProcessingPacket;
+import net.awyvrix.jaw_lab.screen.processingPackets.*;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
-
-import java.util.Optional;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.SimpleChannel;
 
 public class LabPackets {
-
-    private static final String PROTOCOL_VERSION = "1";
-    public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder
+    public static final SimpleChannel INSTANCE = ChannelBuilder
             .named(Lab.resourceLocation("main_channel"))
-            .clientAcceptedVersions(PROTOCOL_VERSION::equals)
-            .serverAcceptedVersions(PROTOCOL_VERSION::equals)
-            .networkProtocolVersion(() -> PROTOCOL_VERSION)
+            .clientAcceptedVersions((status, versions) -> true)
+            .serverAcceptedVersions((status, versions) -> true)
+            .networkProtocolVersion(1)
             .simpleChannel();
 
     private static int packetId = 0;
@@ -28,52 +24,42 @@ public class LabPackets {
     }
 
     public static void register() {
-        INSTANCE.registerMessage(
-                nextID(),
-                OpenCopyMenuPacket.class,
-                OpenCopyMenuPacket::encode,
-                OpenCopyMenuPacket::decode,
-                OpenCopyMenuPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER) // клиент → сервер
-        );
-        INSTANCE.registerMessage(
-                nextID(),
-                OpenMainMenuPacket.class,
-                OpenMainMenuPacket::encode,
-                OpenMainMenuPacket::decode,
-                OpenMainMenuPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
-        );
-        INSTANCE.registerMessage(
-                nextID(),
-                OpenNetworkMenuPacket.class,
-                OpenNetworkMenuPacket::encode,
-                OpenNetworkMenuPacket::decode,
-                OpenNetworkMenuPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
-        );
-        INSTANCE.registerMessage(
-                nextID(),
-                ProcessingPacket.class,
-                ProcessingPacket::encode,
-                ProcessingPacket::decode,
-                ProcessingPacket::handle,
-                Optional.of(NetworkDirection.PLAY_TO_SERVER)
-        );
+        INSTANCE.messageBuilder(OpenCopyMenuPacket.class, nextID(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(OpenCopyMenuPacket::encode)
+                .decoder(OpenCopyMenuPacket::decode)
+                .consumerMainThread(OpenCopyMenuPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(OpenMainMenuPacket.class, nextID(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(OpenMainMenuPacket::encode)
+                .decoder(OpenMainMenuPacket::decode)
+                .consumerMainThread(OpenMainMenuPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(OpenNetworkMenuPacket.class, nextID(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(OpenNetworkMenuPacket::encode)
+                .decoder(OpenNetworkMenuPacket::decode)
+                .consumerMainThread(OpenNetworkMenuPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(ProcessingPacket.class, nextID(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(ProcessingPacket::encode)
+                .decoder(ProcessingPacket::decode)
+                .consumerMainThread(ProcessingPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(NetworkUserInfoPacket.class, nextID(), NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(NetworkUserInfoPacket::encode)
+                .decoder(NetworkUserInfoPacket::decode)
+                .consumerMainThread(NetworkUserInfoPacket::handle)
+                .add();
     }
 
-
-    /**
     public static <MSG> void sendToServer(MSG message) {
-        INSTANCE.sendToServer(message);
+        INSTANCE.send(message, PacketDistributor.SERVER.noArg());
     }
 
-    public static <MSG> void sendToPlayer(MSG message, net.minecraft.server.level.ServerPlayer player) {
-        INSTANCE.sendTo(message, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+    public static <MSG> void sendToClient(MSG message, ServerPlayer player) {
+        INSTANCE.send(message, PacketDistributor.PLAYER.with(player));
     }
-
-    public static <MSG> void sendToAll(MSG message, net.minecraft.server.level.ServerLevel level) {
-        level.players().forEach(p -> sendToPlayer(message, p));
-    }
-     */
 }
