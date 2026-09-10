@@ -26,8 +26,12 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
     public int offsetX = 33;
     public int offsetY = 38;
     private EditBox field;
+
     private final BlockEntity blockEntity = DoorProgrammatorKeyMenu.getBE();
     private final BlockPos pos = blockEntity.getBlockPos();
+
+    private String network = "";
+    private boolean isChanged = false;
 
     private final ResourceLocation TEXTURE =
             new ResourceLocation(Lab.MOD_ID, "textures/gui/door_programmator.png");
@@ -42,6 +46,9 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
         this.inventoryLabelY = 10000;
         this.titleLabelY = 43;
         this.titleLabelX = 65;
+
+        if (!(blockEntity instanceof KeyDoorBE keyDoor)) return;
+        network = keyDoor.getNetwork();
 
         renderElements();
     }
@@ -65,9 +72,8 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
         renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
-    private void renderTextElements(GuiGraphics guiGraphics){
+    private void renderTextElements(GuiGraphics guiGraphics) {
         if (!(blockEntity instanceof KeyDoorBE keyDoor)) return;
-        String network = keyDoor.getNetwork();
         int cLevel = keyDoor.getCLevel();
 
         guiGraphics.drawString(this.font, network, leftPos+offsetX+12, topPos+offsetY+56, 0xFFA500);
@@ -76,35 +82,37 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
 
     private void renderElements(){
         this.addRenderableWidget( // Reset button (network)
-                new GuiButton(TEXTURE, leftPos+offsetX+89, topPos+offsetY+13, 14, 14, 50, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX+89, topPos+offsetY+13, 14, 14, 50, 208, 224, Component.empty(), "gui.button.tooltip.key_door.reset_network", false,
                         button -> {
+                            isChanged = true;
                             LabPackets.sendToServer(new ProcessingPacket("resetDoor", pos));
                         }));
         this.addRenderableWidget( // Auto-close button (mode)
-                new GuiButton(TEXTURE, leftPos+offsetX+89, topPos+offsetY+29, 14, 14, 2, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX+89, topPos+offsetY+29, 14, 14, 2, 208, 224, Component.empty(), "gui.button.tooltip.lab_door.submit", false,
                         button -> {
                             LabPackets.sendToServer(new ProcessingPacket("switchAutoClose", pos));
                         }));
 
         this.addRenderableWidget( // Increase Level (mode)
-                new GuiButton(TEXTURE, leftPos+offsetX+8, topPos+offsetY+13, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX+8, topPos+offsetY+13, 14, 14, 18, 208, 224, Component.empty(), "gui.button.tooltip.key_door.increase_level", false,
                         button -> {
                             LabPackets.sendToServer(new ProcessingPacket("increment", pos));
                         }));
         this.addRenderableWidget( // Decrease Level (mode)
-                new GuiButton(TEXTURE, leftPos+offsetX+8, topPos+offsetY+29, 14, 14, 34, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX+8, topPos+offsetY+29, 14, 14, 34, 208, 224, Component.empty(), "gui.button.tooltip.key_door.decrease_level", false,
                         button -> {
                             LabPackets.sendToServer(new ProcessingPacket("decrement", pos));
                         }));
 
         this.addRenderableWidget( // Set network (mode)
-                new GuiButton(TEXTURE, leftPos+offsetX+86, topPos+offsetY+70, 11, 11, 66, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX+86, topPos+offsetY+70, 11, 11, 66, 208, 224, Component.empty(), "gui.button.tooltip.key_door.set_network", false,
                         button -> {
                             if (field.getValue().isEmpty()) return;
+                            isChanged = true;
                             LabPackets.sendToServer(new ProcessingPacket("setNetwork", pos, field.getValue()));
                         }));
 
-        field = new EditBox(this.font, leftPos+offsetX+9, topPos+offsetY+70, 74, 11, Component.literal("Field"));
+        field = new EditBox(this.font, leftPos+offsetX+8, topPos+offsetY+69, 76, 13, Component.literal("Field"));
         field.setMaxLength(18);field.setBordered(true);field.setVisible(true);field.setTextColor(0xFFFFFF);this.addRenderableWidget(field);
     }
 
@@ -121,5 +129,10 @@ public class DoorProgrammatorKeyScreen extends AbstractContainerScreen<DoorProgr
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    public void updateInfo(String network) {
+        if (isChanged) this.network = network;
+        isChanged = false;
     }
 }

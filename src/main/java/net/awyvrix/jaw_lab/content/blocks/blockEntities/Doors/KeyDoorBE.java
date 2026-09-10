@@ -27,10 +27,12 @@ public class KeyDoorBE extends BlockEntity implements TickableBE, DoorBlock {
     public KeyDoorBE(BlockPos pos, BlockState state) {
         super(LabBlockEntities.KEY_DOOR_BE.get(), pos, state);
     }
+
     public void setAutoClose(boolean autoClose) {
+        if (level == null || level.isClientSide) return;
         this.autoClose = autoClose;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         setChanged();
-        if(level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
     public boolean getAutoClose() {
         return autoClose;
@@ -40,21 +42,31 @@ public class KeyDoorBE extends BlockEntity implements TickableBE, DoorBlock {
         ticks = 0;
     }
 
-    public void setClevel(int clevel){
+    public void setClevel(int clevel) {
+        if (level == null || level.isClientSide) return;
         if (clevel < 0) return;
         this.clevel = clevel;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         setChanged();
-        if(level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
     public int getCLevel() {
         return clevel;
     }
 
-    public void setNetwork(Network network){
+    public void setNetwork(Network network) {
+        if (level == null || level.isClientSide) return;
         this.network = network.getName();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         setChanged();
-        if(level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
+
+    public void resetNetwork() {
+        if (level == null || level.isClientSide) return;
+        this.network = null;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        setChanged();
+    }
+
     public String getNetwork() {
         return network;
     }
@@ -73,10 +85,12 @@ public class KeyDoorBE extends BlockEntity implements TickableBE, DoorBlock {
         network = tag.getString("cNetwork");
         autoClose = tag.getBoolean("cAutoClose");
     }
+
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
+
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();

@@ -2,6 +2,8 @@ package net.awyvrix.jaw_lab.screen.processingPackets;
 
 import net.awyvrix.jaw_lab.content.network.NetworkRole;
 import net.awyvrix.jaw_lab.screen.KCPNetwork.KeycardProgrammatorNetworkScreen;
+import net.awyvrix.jaw_lab.screen.doorProgrammator.CodeDoor.DoorProgrammatorCodeScreen;
+import net.awyvrix.jaw_lab.screen.doorProgrammator.KeyDoor.DoorProgrammatorKeyScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.event.network.CustomPayloadEvent;
@@ -39,13 +41,17 @@ public class NetworkUserInfoPacket {
         ctx.enqueueWork(() -> {
             Minecraft minecraft = Minecraft.getInstance();
 
-            if (!(minecraft.screen instanceof KeycardProgrammatorNetworkScreen screen)) return;
-            screen.updateUserInfo(
-                    msg.network,
-                    msg.user,
-                    msg.role,
-                    msg.accessLevel
-            );
+            if (minecraft.screen instanceof KeycardProgrammatorNetworkScreen screen) {
+                screen.updateInfo(msg.network, msg.user, msg.role, msg.accessLevel);
+            }
+
+            if (minecraft.screen instanceof DoorProgrammatorCodeScreen screen) {
+                screen.updateInfo(msg.network);
+            }
+
+            if (minecraft.screen instanceof DoorProgrammatorKeyScreen screen) {
+                screen.updateInfo(msg.network);
+            }
         });
         ctx.setPacketHandled(true);
     }

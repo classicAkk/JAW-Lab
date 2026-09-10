@@ -210,7 +210,7 @@ public class InsideElevatorButton extends FaceAttachedHorizontalDirectionalBlock
     }
 
     @Override
-    protected MapCodec<? extends FaceAttachedHorizontalDirectionalBlock> codec() {
+    protected MapCodec<? extends FaceAttachedHorizontalDirectionalBlock> m_304657_() {
         return null;
     }
 }

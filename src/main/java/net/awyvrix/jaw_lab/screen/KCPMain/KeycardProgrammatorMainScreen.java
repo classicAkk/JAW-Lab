@@ -89,31 +89,31 @@ public class KeycardProgrammatorMainScreen extends AbstractContainerScreen<Keyca
 
     private void renderElements(){
         this.addRenderableWidget( //reset button (card)
-                new GuiButton(TEXTURE, leftPos+11, topPos+66, 14, 14, 28, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+11, topPos+66, 14, 14, 28, 172, 188, Component.empty(), "gui.button.tooltip.kcp_main.reset_keycard", false,
                         button -> {
                             LabPackets.sendToServer(new ProcessingPacket("resetKeycard", pos, 36));
                         }));
 
         this.addRenderableWidget( //add_network button (card network)
-                new GuiButton(TEXTURE, leftPos+43, topPos+50, 14, 14, 44, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+43, topPos+50, 14, 14, 44, 172, 188, Component.empty(), "gui.button.tooltip.kcp_main.add_network", false,
                         button -> {
                             if (!field.getValue().isEmpty()) {
                                 LabPackets.sendToServer(new ProcessingPacket("addNetwork", pos, 36, field.getValue()));
                             }
                         }));
         this.addRenderableWidget( //delete_network button (card network)
-                new GuiButton(TEXTURE, leftPos+43, topPos+66, 14, 14, 60, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+43, topPos+66, 14, 14, 60, 172, 188, Component.empty(), "gui.button.tooltip.kcp_main.remove_network", false,
                         button -> {
                             LabPackets.sendToServer(new ProcessingPacket("removeNetwork", pos, 36));
                         }));
 
         this.addRenderableWidget( //bind button (owner UUID)
-                new GuiButton(TEXTURE, leftPos+27, topPos+66, 14, 14, 76, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+27, topPos+66, 14, 14, 76, 172, 188, Component.empty(), "gui.button.tooltip.kcp_main.bind_uuid", false,
                         button -> {
                             LabPackets.sendToServer(new ProcessingPacket("uuid", pos, 36));
                         }));
         this.addRenderableWidget( //add button (card owner)
-                new GuiButton(TEXTURE, leftPos+27, topPos+50, 14, 14, 44, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+27, topPos+50, 14, 14, 44, 172, 188, Component.empty(), "gui.button.tooltip.kcp_main.add_owner", false,
                         button -> {
                             if (!field.getValue().isEmpty()) {
                                 LabPackets.sendToServer(new ProcessingPacket("owner", pos, 36, field.getValue()));
@@ -121,28 +121,28 @@ public class KeycardProgrammatorMainScreen extends AbstractContainerScreen<Keyca
                         }));
 
         this.addRenderableWidget( //add_level button (card level)
-                new GuiButton(TEXTURE, leftPos+147, topPos+53, 10, 10, 92, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+147, topPos+53, 10, 10, 92, 172, 188, Component.empty(), "gui.button.tooltip.kcp_main.increase_level", false,
                         button -> {
                     LabPackets.sendToServer(new ProcessingPacket("increaseLevel", pos, network));
                         }));
         this.addRenderableWidget( //decrease_level button (card level)
-                new GuiButton(TEXTURE, leftPos+159, topPos+53, 10, 10, 104, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+159, topPos+53, 10, 10, 104, 172, 188, Component.empty(), "gui.button.tooltip.kcp_main.decrease_level", false,
                         button -> {
                     LabPackets.sendToServer(new ProcessingPacket("decreaseLevel", pos, network));
                         }));
 
         this.addRenderableWidget( //next button (mode)
-                new GuiButton(TEXTURE, leftPos+159, topPos+66, 10, 14, 4, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+159, topPos+66, 10, 14, 4, 172, 188, Component.empty(), "", false,
                         button -> {
                             LabPackets.sendToServer(new OpenCopyMenuPacket(pos));
                         }));
         this.addRenderableWidget( //previous button (mode)
-                new GuiButton(TEXTURE, leftPos+147, topPos+66, 10, 14, 16, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+147, topPos+66, 10, 14, 16, 172, 188, Component.empty(), "", false,
                         button -> {
                             LabPackets.sendToServer(new OpenNetworkMenuPacket(pos));
                         }));
 
-        field = new EditBox(this.font, leftPos+60, topPos+67, 84, 12, Component.literal("Field"));
+        field = new EditBox(this.font, leftPos+59, topPos+66, 86, 14, Component.literal("Field"));
         field.setMaxLength(18);field.setBordered(true);field.setVisible(true);field.setTextColor(0xFFFFFF);this.addRenderableWidget(field);
     }
 

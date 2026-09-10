@@ -176,11 +176,9 @@ public class KeyDoor extends Block implements EntityBlock {
                 int cLevel = tag.getInt("cLevel");
                 String cNetwork = tag.getString("cNetwork");
                 int x = pPos.getX(); int y = pPos.getY(); int z = pPos.getZ();
-                if (state == DoorState.ERROR) return InteractionResult.FAIL;
 
-                //System.out.print(keydoor.getNetwork() + " " + cNetwork + " - " + keydoor.getCLevel() + " " + cLevel + "\n");
-                if ((keydoor.getCLevel() > cLevel || (!cNetwork.equals(keydoor.getNetwork()) && cNetwork.equals("null")) || stack.isEmpty())
-                        && state != DoorState.OPENED && state != DoorState.ERROR) {
+                if (state == DoorState.ERROR) return InteractionResult.FAIL;
+                if ((keydoor.getCLevel() > cLevel || (!cNetwork.equals(keydoor.getNetwork()) && cNetwork.equals("null")) || stack.isEmpty()) && state == DoorState.CLOSED) {
                     pPlayer.displayClientMessage(Component.literal("Access Denied").withStyle(ChatFormatting.RED), true);
                     pLevel.playSound(null, pPos, LabSounds.KEYDOOR_ERROR.get(), SoundSource.BLOCKS, 0.5f, 1f);
                     pLevel.setBlockAndUpdate(pPos, pState.setValue(STATE, DoorState.ERROR));
@@ -188,7 +186,7 @@ public class KeyDoor extends Block implements EntityBlock {
                     return InteractionResult.FAIL;
                 }
                 if (pPlayer.getItemInHand(pHand).getItem().equals(LabItems.DOOR_PROGRAMMATOR.get()) && pPlayer.isShiftKeyDown()) {
-                    pPlayer.displayClientMessage(Component.literal("Successfully pasted settings").withStyle(ChatFormatting.GREEN), true);
+                    pPlayer.displayClientMessage(Component.literal("NOT Successfully pasted settings (WIP)").withStyle(ChatFormatting.GREEN), true);
                     //pass for now; Paste the settings from keydoorProgrammator
                     return InteractionResult.SUCCESS;
                 }

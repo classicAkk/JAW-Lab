@@ -119,7 +119,7 @@ public class ProcessingPacket {
                 switch(type) {
                     case("resetKeycard") -> KeycardInteractions.resetKeycard(MainMenu, serverPlayer, 36);
                     case("uuid") -> KeycardInteractions.setUUID(MainMenu, serverPlayer, 36);
-                    case("owner") -> KeycardInteractions.setUsername(MainMenu, 36, playerName);
+                    case("owner") -> KeycardInteractions.setUsername(MainMenu, 36, networkName); // Network name = player name
                     case("increaseLevel") -> KeycardInteractions.increaseLevel(MainMenu, 36, serverLevel, networkName, serverPlayer);
                     case("decreaseLevel") -> KeycardInteractions.decreaseLevel(MainMenu, 36, serverLevel, networkName, serverPlayer);
                     case("resetLevel") -> KeycardInteractions.resetLevel(MainMenu, 36);
@@ -136,7 +136,7 @@ public class ProcessingPacket {
                         UUIDFetcher.getPlayerUUIDAsync(ctx.getSender().getServer(), playerName).thenAccept(uuid -> {
 
                         if (uuid != null) NetworkInteractions.addUser(serverLevel, uuid, playerName, networkName);
-                        else System.out.println("Cannot get the UUID of "+playerName);
+                        else Lab.LOGGER.error("Cannot get the UUID of: " + playerName + "; User wasn't created");
                     });
                     case("removeUser") -> NetworkInteractions.removeUser(serverLevel, networkName, serverPlayer, playerName);
                     case("increaseUserLevel") -> NetworkInteractions.increaseUserLevel(serverLevel, networkName, serverPlayer, playerName);
@@ -153,7 +153,7 @@ public class ProcessingPacket {
             }
             if (serverPlayer.containerMenu instanceof CodeDoorMenu) {
                 switch(type) {
-                    case("setCode") -> DoorInteractions.setCode(blockEntity, playerName, serverPlayer); // player = passcode
+                    case("setCode") -> DoorInteractions.setCode(blockEntity, networkName, serverPlayer); // networkName = passcode
                     case("openDoor") -> DoorInteractions.setDoor(blockEntity, serverLevel, serverPlayer);
                     case("error") -> DoorInteractions.error(blockEntity, serverLevel, serverPlayer);
                     default -> Lab.LOGGER.error("Cannot find case to process packet caused by: {}", type);

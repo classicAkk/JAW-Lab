@@ -90,68 +90,68 @@ public class CodeDoorScreen extends AbstractContainerScreen<CodeDoorMenu> {
 
     private void renderElements() {
         this.addRenderableWidget( //1
-                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 26, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 26, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="1";
                         }));
         this.addRenderableWidget( //2
-                new GuiButton(TEXTURE, leftPos+offsetX + 33, topPos+offsetY + 26, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 33, topPos+offsetY + 26, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="2";
                         }));
         this.addRenderableWidget( //3
-                new GuiButton(TEXTURE, leftPos+offsetX + 52, topPos+offsetY + 26, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 52, topPos+offsetY + 26, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="3";
                         }));
         this.addRenderableWidget( //4
-                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 45, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 45, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="4";
                         }));
         this.addRenderableWidget( //5
-                new GuiButton(TEXTURE, leftPos+offsetX + 33, topPos+offsetY + 45, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 33, topPos+offsetY + 45, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="5";
                         }));
         this.addRenderableWidget( //6
-                new GuiButton(TEXTURE, leftPos+offsetX + 52, topPos+offsetY + 45, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 52, topPos+offsetY + 45, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="6";
                         }));
         this.addRenderableWidget( //7
-                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 64, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 64, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="7";
                         }));
         this.addRenderableWidget( //8
-                new GuiButton(TEXTURE, leftPos+offsetX + 33, topPos+offsetY + 64, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 33, topPos+offsetY + 64, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="8";
                         }));
         this.addRenderableWidget( //9
-                new GuiButton(TEXTURE, leftPos+offsetX + 52, topPos+offsetY + 64, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 52, topPos+offsetY + 64, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="9";
                         }));
         this.addRenderableWidget( //0
-                new GuiButton(TEXTURE, leftPos+offsetX + 33, topPos+offsetY + 83, 14, 14, 18, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 33, topPos+offsetY + 83, 14, 14, 18, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (isValidLength(text, 9)) text+="0";
                         }));
         this.addRenderableWidget( //backspace
-                new GuiButton(TEXTURE, leftPos+offsetX + 52, topPos+offsetY + 83, 14, 14, 34, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 52, topPos+offsetY + 83, 14, 14, 34, 208, 224, Component.empty(), "", false,
                         button -> {
                     if (!text.isEmpty()) text = text.substring(0, text.length() - 1);
                         }));
         this.addRenderableWidget( //visible
-                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 83, 14, 14, 2, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 83, 14, 14, 2, 208, 224, Component.empty(), "gui.button.tooltip.code_door.showhide", false,
                         button -> {
                             hidden = !hidden;
                         }));
 
         this.addRenderableWidget( //submit
-                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 101, 52, 14, 50, 208, 224, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+offsetX + 14, topPos+offsetY + 101, 52, 14, 50, 208, 224, Component.empty(), "gui.button.tooltip.code_door.submit", false,
                         button -> {
                             if (blockEntity instanceof CodeDoorBE be) {
                                 if (be.getPasscode().isEmpty()) {

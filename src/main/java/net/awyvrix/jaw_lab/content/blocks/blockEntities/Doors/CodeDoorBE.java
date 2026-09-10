@@ -32,30 +32,44 @@ public class CodeDoorBE extends BlockEntity implements TickableBE, DoorBlock {
         ticks = 0;
     }
 
-    public void setNetwork(Network network){
+    public void setNetwork(Network network) {
+        if (level == null || level.isClientSide) return;
         this.network = network.getName();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         setChanged();
-        if(level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
+
+    public void resetNetwork() {
+        if (level == null || level.isClientSide) return;
+        this.network = null;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        setChanged();
+    }
+
     public String getNetwork() {
         return network;
     }
 
-    public void setAutoClose(boolean autoClose){
+    public void setAutoClose(boolean autoClose) {
+        if (level == null || level.isClientSide) return;
         this.autoClose = autoClose;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         setChanged();
-        if(level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
+
     public boolean getAutoClose() {
         return autoClose;
     }
 
     public void setPasscode(String cPasscode){
+        if(level == null || level.isClientSide) return;
         this.cPasscode = cPasscode;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         setChanged();
-        if(level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
+
     public String getPasscode() {
+
         return cPasscode;
     }
 
@@ -74,10 +88,12 @@ public class CodeDoorBE extends BlockEntity implements TickableBE, DoorBlock {
         network = tag.getString("cNetwork");
         autoClose = tag.getBoolean("cAutoClose");
     }
+
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
+
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();

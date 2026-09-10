@@ -26,23 +26,21 @@ public class TaskProcess {
             ServerPlayer serverPlayer = task.serverPlayer();
             String networkName = task.networkName();
             String playerName = task.playerName();
+            ServerLevel serverLevel = task.serverPlayer().serverLevel();
 
-            for (ServerLevel serverLevel : event.getServer().getAllLevels()) {
-
-                if (playerName.isEmpty()) {
-                    String playerName2 = task.serverPlayer().getName().getString();
-                    LabPackets.sendToClient(new NetworkUserInfoPacket(
-                            networkName, playerName2,
-                            NetworkInteractions.getUserRole(serverLevel, networkName, playerName2),
-                            NetworkInteractions.getUserAccessLevel(serverLevel, networkName, playerName2)
-                    ), serverPlayer);
-                } else {
-                    LabPackets.sendToClient(new NetworkUserInfoPacket(
-                            networkName, playerName,
-                            NetworkInteractions.getUserRole(serverLevel, networkName, playerName),
-                            NetworkInteractions.getUserAccessLevel(serverLevel, networkName, playerName)
-                    ), serverPlayer);
-                }
+            if (playerName.isEmpty()) {
+                String playerName2 = task.serverPlayer().getName().getString();
+                LabPackets.sendToClient(new NetworkUserInfoPacket(
+                        networkName, playerName2,
+                        NetworkInteractions.getUserRole(serverLevel, networkName, playerName2),
+                        NetworkInteractions.getUserAccessLevel(serverLevel, networkName, playerName2)
+                ), serverPlayer);
+            } else {
+                LabPackets.sendToClient(new NetworkUserInfoPacket(
+                        networkName, playerName,
+                        NetworkInteractions.getUserRole(serverLevel, networkName, playerName),
+                        NetworkInteractions.getUserAccessLevel(serverLevel, networkName, playerName)
+                ), serverPlayer);
             }
         }
     }

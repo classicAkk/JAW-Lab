@@ -57,5 +57,43 @@
   "tooltip.lab.fuse.tooltip":"Спасает оборудование",
   "tooltip.lab.duct_tape.tooltip":"Починит В С Ё",
 
-  "creativetab.lab_tab": "JAW Laboratory"
+  "creativetab.lab_tab": "JAW Laboratory",
+
+  "gui.button.tooltip.expand": "[Shift]",
+
+  "gui.button.tooltip.code_door.showhide": "Показать / Скрыть",
+  "gui.button.tooltip.code_door.submit": "Применить",
+
+  "gui.button.tooltip.lab_door.submit": "Автоматическое закрытие",
+  "gui.button.tooltip.key_door.reset_network": "Сбросить сеть",
+  "gui.button.tooltip.key_door.set_network": "Установить сеть",
+  "gui.button.tooltip.key_door.increase_level": "Повысить уровень",
+  "gui.button.tooltip.key_door.decrease_level": "Понизить уровень",
+
+
+  "gui.button.tooltip.kcp_clone.clone_keycard": "Клонировать ключ-карту",
+
+
+  "gui.button.tooltip.kcp_main.reset_keycard": "Сбросить ключ-карту",
+  "gui.button.tooltip.kcp_main.add_network": "Добавить сеть",
+  "gui.button.tooltip.kcp_main.remove_network": "Удалить сеть",
+  "gui.button.tooltip.kcp_main.bind_uuid": "Привязать UUID",
+  "gui.button.tooltip.kcp_main.add_owner": "Добавить владельца",
+
+
+  "gui.button.tooltip.kcp_main.increase_level": "Повысить уровень",
+  "gui.button.tooltip.kcp_main.decrease_level": "Понизить уровень",
+
+
+  "gui.button.tooltip.kcp_network.create_network": "Создать / Найти сеть",
+  "gui.button.tooltip.kcp_network.delete_network": "УДАЛИТЬ сеть",
+  "gui.button.tooltip.kcp_network.lock_network": "Разблокировать опасные действия (удерживать ALT)",
+
+  "gui.button.tooltip.kcp_network.add_user": "Добавить пользователя",
+  "gui.button.tooltip.kcp_network.delete_user": "Удалить пользователя",
+  "gui.button.tooltip.kcp_network.find_user": "Найти пользователя",
+  "gui.button.tooltip.kcp_network.increse_level": "Повысить уровень доступа",
+  "gui.button.tooltip.kcp_network.decrese_level": "Понизить уровень доступа",
+  "gui.button.tooltip.kcp_network.increse_role": "Повысить роль пользователя",
+  "gui.button.tooltip.kcp_network.decrese_role": "Понизить роль пользователя"
 }

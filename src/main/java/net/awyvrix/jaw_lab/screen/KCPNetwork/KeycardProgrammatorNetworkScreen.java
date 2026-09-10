@@ -26,6 +26,7 @@ import org.lwjgl.glfw.GLFW;
 public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<KeycardProgrammatorNetworkMenu> {
     private EditBox field;
 
+    private boolean isChecked = false;
     private String network = "none";
     private String user = "none";
     private NetworkRole role = NetworkRole.UNKNOWN;
@@ -91,9 +92,11 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
     }
 
     public NetworkRole incrementRole(NetworkRole role) {
+        if (role.ordinal()+1 >= NetworkRole.values().length) return role;
         return NetworkRole.values()[role.ordinal()+1];
     }
     public NetworkRole decrementRole(NetworkRole role) {
+        if (role.ordinal()-1 < 0) return role;
         return NetworkRole.values()[role.ordinal()-1];
     }
 
@@ -108,7 +111,7 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
 
     private void renderElements(){
         this.addRenderableWidget( //plus button (network)
-                new GuiButton(TEXTURE, leftPos+27, topPos+50, 14, 14, 28, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+27, topPos+50, 14, 14, 28, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.create_network", false,
                         button -> {
                             if (!field.getValue().isBlank()) {
                                 String network = field.getValue();
@@ -116,7 +119,7 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                             }
                         }));
         this.addRenderableWidget( //minus button (network)
-                new GuiButton(TEXTURE, leftPos+27, topPos+66, 14, 14, 44, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+27, topPos+66, 14, 14, 44, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.delete_network", true,
                         button -> {
                             if (!network.equals("none")) {
                                 String network = field.getValue();
@@ -124,11 +127,13 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                             }
                         }));
         this.addRenderableWidget( //lock minus button (network)
-                new GuiButton(TEXTURE, leftPos+11, topPos+66, 14, 14, 60, 172, 188, Component.empty(),
-                        button -> {}));
+                new GuiButton(TEXTURE, leftPos+11, topPos+66, 14, 14, 60, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.lock_network", false,
+                        button -> {
+                    isChecked = !isChecked;
+                }));
 
         this.addRenderableWidget( //plus button (user)
-                new GuiButton(TEXTURE, leftPos+43, topPos+50, 14, 14, 28, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+43, topPos+50, 14, 14, 28, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.add_user", false,
                         button -> {
                             if (!network.equals("none") && !field.getValue().isBlank()) {
                                 String user = field.getValue();
@@ -136,7 +141,7 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                             }
                         }));
         this.addRenderableWidget( //minus button (user)
-                new GuiButton(TEXTURE, leftPos+43, topPos+66, 14, 14, 44, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+43, topPos+66, 14, 14, 44, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.delete_user", false,
                         button -> {
                             if (!network.equals("none") && !field.getValue().isBlank()) {
                                 String user = field.getValue();
@@ -144,7 +149,7 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                             }
                         }));
         this.addRenderableWidget( //find button (user)
-                new GuiButton(TEXTURE, leftPos+126, topPos+53, 10, 10, 118, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+126, topPos+53, 10, 10, 118, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.find_user", false,
                         button -> {
                             if (!field.getValue().isBlank() && !network.equals("none")) {
                                 String user = field.getValue();
@@ -153,14 +158,14 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                         }));
 
         this.addRenderableWidget( //increase button (level)
-                new GuiButton(TEXTURE, leftPos+147, topPos+53, 10, 10, 76, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+147, topPos+53, 10, 10, 76, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.increse_level", false,
                         button -> {
                             if (!network.equals("none") && !user.equals("none")) {
                                 LabPackets.sendToServer(new ProcessingPacket("increaseUserLevel", pos, network, user));
                             }
                         }));
         this.addRenderableWidget( //decrease button (level)
-                new GuiButton(TEXTURE, leftPos+159, topPos+53, 10, 10, 88, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+159, topPos+53, 10, 10, 88, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.decrese_level", false,
                         button -> {
                             if (!network.equals("none") && !user.equals("none")) {
                                 LabPackets.sendToServer(new ProcessingPacket("decreaseUserLevel", pos, network, user));
@@ -168,35 +173,35 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
                         }));
 
         this.addRenderableWidget( //role button (increase)
-                new GuiButton(TEXTURE, leftPos+138, topPos+52, 7, 5, 100, 172, 188, Component.empty(),
-                        button -> {
-                            if (!network.equals("none") && !user.equals("none")) {
-                                NetworkRole newRole = incrementRole(role);
-                                LabPackets.sendToServer(new ProcessingPacket("setRole", pos, network, user, newRole));
-                            }
-                        }));
-        this.addRenderableWidget( //role button (decrease)
-                new GuiButton(TEXTURE, leftPos+138, topPos+59, 7, 5, 109, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+138, topPos+52, 7, 5, 100, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.increse_role", true,
                         button -> {
                             if (!network.equals("none") && !user.equals("none")) {
                                 NetworkRole newRole = decrementRole(role);
                                 LabPackets.sendToServer(new ProcessingPacket("setRole", pos, network, user, newRole));
                             }
                         }));
+        this.addRenderableWidget( //role button (decrease)
+                new GuiButton(TEXTURE, leftPos+138, topPos+59, 7, 5, 109, 172, 188, Component.empty(), "gui.button.tooltip.kcp_network.decrese_role", false,
+                        button -> {
+                            if (!network.equals("none") && !user.equals("none")) {
+                                NetworkRole newRole = incrementRole(role);
+                                LabPackets.sendToServer(new ProcessingPacket("setRole", pos, network, user, newRole));
+                            }
+                        }));
 
 
         this.addRenderableWidget( //next button (mode)
-                new GuiButton(TEXTURE, leftPos+159, topPos+66, 10, 14, 4, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+159, topPos+66, 10, 14, 4, 172, 188, Component.empty(), "", false,
                         button -> {
                             LabPackets.sendToServer(new OpenMainMenuPacket(pos));
                         }));
         this.addRenderableWidget( //previous button (mode)
-                new GuiButton(TEXTURE, leftPos+147, topPos+66, 10, 14, 16, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+147, topPos+66, 10, 14, 16, 172, 188, Component.empty(), "", false,
                         button -> {
                             LabPackets.sendToServer(new OpenCopyMenuPacket(pos));
                         }));
 
-        field = new EditBox(this.font, leftPos+60, topPos+67, 84, 12, Component.literal("Field"));
+        field = new EditBox(this.font, leftPos+59, topPos+66, 86, 14, Component.literal("Field"));
         field.setMaxLength(18);field.setBordered(true);field.setVisible(true);field.setTextColor(0xFFFFFF);this.addRenderableWidget(field);
     }
 
@@ -216,7 +221,7 @@ public class KeycardProgrammatorNetworkScreen extends AbstractContainerScreen<Ke
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public void updateUserInfo(String network, String user, NetworkRole role, int accessLevel) {
+    public void updateInfo(String network, String user, NetworkRole role, int accessLevel) {
         this.network = network;
         this.user = user;
         this.role = role;

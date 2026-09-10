@@ -82,11 +82,12 @@ public class DoorInteractions {
         if (!NetworkSecurity.canChangeDoorSettings(data.getNetwork(networkName).getUser(pPlayer.getUUID()))) return;
         if (pBlockEntity instanceof CodeDoorBE codeDoorBE) {
             codeDoorBE.setPasscode("");
+            codeDoorBE.resetNetwork();
             codeDoorBE.setAutoClose(true);
         }
         if (pBlockEntity instanceof KeyDoorBE keyDoorBE) {
             keyDoorBE.setClevel(0);
-            keyDoorBE.setNetwork((Network) null);
+            keyDoorBE.resetNetwork();
             keyDoorBE.setAutoClose(true);
         }
     }

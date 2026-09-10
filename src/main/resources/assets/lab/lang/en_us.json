@@ -58,5 +58,43 @@
   "tooltip.lab.fuse.tooltip":"Saves equipment",
   "tooltip.lab.duct_tape.tooltip":"Can fix everything",
 
-  "creativetab.lab_tab": "JAW Laboratory"
+  "creativetab.lab_tab": "JAW Laboratory",
+
+  "gui.button.tooltip.expand": "[Shift]",
+
+  "gui.button.tooltip.code_door.showhide": "Show / Hide",
+  "gui.button.tooltip.code_door.submit": "Submit",
+
+  "gui.button.tooltip.lab_door.submit": "Auto Close",
+  "gui.button.tooltip.key_door.reset_network": "Reset Network",
+  "gui.button.tooltip.key_door.set_network": "Set Network",
+  "gui.button.tooltip.key_door.increase_level": "Increase Level",
+  "gui.button.tooltip.key_door.decrease_level": "Decrease Level",
+
+
+  "gui.button.tooltip.kcp_clone.clone_keycard": "Clone Key-Card",
+
+
+  "gui.button.tooltip.kcp_main.reset_keycard": "Reset Key-Card",
+  "gui.button.tooltip.kcp_main.add_network": "Add Network",
+  "gui.button.tooltip.kcp_main.remove_network": "Remove Network",
+  "gui.button.tooltip.kcp_main.bind_uuid": "Bind UUID",
+  "gui.button.tooltip.kcp_main.add_owner": "Add Owner",
+
+
+  "gui.button.tooltip.kcp_main.increase_level": "Increase Level",
+  "gui.button.tooltip.kcp_main.decrease_level": "Decrease Level",
+
+
+  "gui.button.tooltip.kcp_network.create_network": "Create / Find Network",
+  "gui.button.tooltip.kcp_network.delete_network": "DELETE Network",
+  "gui.button.tooltip.kcp_network.lock_network": "Unlock Dangerous Actions (hold ALT)",
+
+  "gui.button.tooltip.kcp_network.add_user": "Add User",
+  "gui.button.tooltip.kcp_network.delete_user": "Delete User",
+  "gui.button.tooltip.kcp_network.find_user": "Find User",
+  "gui.button.tooltip.kcp_network.increse_level": "Increase Access Level",
+  "gui.button.tooltip.kcp_network.decrese_level": "Decrease Access Level",
+  "gui.button.tooltip.kcp_network.increse_role": "Increase User Role",
+  "gui.button.tooltip.kcp_network.decrese_role": "Decrease User Role"
 }

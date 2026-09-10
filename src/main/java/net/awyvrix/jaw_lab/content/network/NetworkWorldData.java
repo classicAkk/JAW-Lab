@@ -191,7 +191,7 @@ public class NetworkWorldData extends SavedData {
     }
     public NetworkRole getUserRole(String networkName, UUID uuid) {
         NetworkUser user = findUser(networkName, uuid);
-        return user != null ? user.getRole() : null;
+        return user != null ? user.getRole() : NetworkRole.UNKNOWN;
     }
     public UUID getUserUUID(String networkName, String username) {
         NetworkUser user = findUser(networkName, username);

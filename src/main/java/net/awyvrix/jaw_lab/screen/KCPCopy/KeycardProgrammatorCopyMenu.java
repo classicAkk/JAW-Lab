@@ -1,5 +1,6 @@
 package net.awyvrix.jaw_lab.screen.KCPCopy;
 
+import net.awyvrix.jaw_lab.Lab;
 import net.awyvrix.jaw_lab.content.blocks.blockEntities.KeycardProgrammatorBE;
 import net.awyvrix.jaw_lab.content.blocks.LabBlocks;
 import net.awyvrix.jaw_lab.screen.LabMenuTypes;
@@ -78,7 +79,7 @@ public class KeycardProgrammatorCopyMenu extends AbstractContainerMenu {
                 return ItemStack.EMPTY;
             }
         } else {
-            System.out.println("Invalid slotIndex:" + pIndex);
+            Lab.LOGGER.error("Invalid slotIndex for KeyCard Programmator" + pIndex);
             return ItemStack.EMPTY;
         }
         // If stack size == 0 (the entire stack was moved) set slot contents to null

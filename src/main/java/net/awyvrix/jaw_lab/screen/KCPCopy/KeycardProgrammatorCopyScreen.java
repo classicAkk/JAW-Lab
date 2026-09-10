@@ -55,18 +55,18 @@ public class KeycardProgrammatorCopyScreen extends AbstractContainerScreen<Keyca
 
     private void renderElements(){
         this.addRenderableWidget( //copy button (network)
-                new GuiButton(TEXTURE, leftPos+23, topPos+66, 17, 14, 28, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+23, topPos+66, 17, 14, 28, 172, 188, Component.empty(), "gui.button.tooltip.kcp_clone.clone_keycard", false,
                         button -> {
                             LabPackets.sendToServer(new ProcessingPacket("copyCard", pos, 36));
                         }));
 
         this.addRenderableWidget( //next button (mode)
-                new GuiButton(TEXTURE, leftPos+159, topPos+66, 10, 14, 4, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+159, topPos+66, 10, 14, 4, 172, 188, Component.empty(), "", false,
                         button -> {
                             LabPackets.sendToServer(new OpenNetworkMenuPacket(pos));
                         }));
         this.addRenderableWidget( //previous button (mode)
-                new GuiButton(TEXTURE, leftPos+147, topPos+66, 10, 14, 16, 172, 188, Component.empty(),
+                new GuiButton(TEXTURE, leftPos+147, topPos+66, 10, 14, 16, 172, 188, Component.empty(), "", false,
                         button -> {
                             LabPackets.sendToServer(new OpenMainMenuPacket(pos));
                         }));

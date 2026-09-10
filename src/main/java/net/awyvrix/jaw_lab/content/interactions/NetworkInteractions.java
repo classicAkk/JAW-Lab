@@ -12,6 +12,8 @@ import java.util.UUID;
 public class NetworkInteractions {
     public static void createNetwork(ServerLevel level, String networkName, Player player) {
         NetworkWorldData data = NetworkWorldData.get(level);
+
+        if (data.isValidNetwork(networkName)) return;
         data.createNetwork(networkName, level, player);
     }
     public static void deleteNetwork(ServerLevel level, String networkName, Player player) {

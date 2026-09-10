@@ -79,7 +79,7 @@ public class KeycardProgrammator extends BaseEntityBlock {
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
+    protected MapCodec<? extends BaseEntityBlock> m_304657_() {
         return null;
     }
 
